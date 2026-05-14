@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <rect width="1200" height="800" fill="#f7f4ee"/>
+  <rect x="0" y="0" width="1200" height="6" fill="#b3361f"/>
+
+  <text x="60" y="60" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#7a766f" letter-spacing="1.6" font-weight="600">QUIET-BROKE INDEX · v0.1 · TOP 15 METROS</text>
+  <text x="60" y="100" font-family="Georgia, 'Times New Roman', serif" font-size="30" font-weight="700" fill="#1b1a17">Where $400K feels most squeezed</text>
+
+  <line x1="220" y1="124" x2="220" y2="736" stroke="#d9d2c6" stroke-width="1.5" /><text x="220" y="756" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#7a766f">0</text><line x1="348.57142857142856" y1="124" x2="348.57142857142856" y2="736" stroke="#d9d2c6" stroke-width="0.5" /><text x="348.57142857142856" y="756" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#7a766f">10</text><line x1="477.1428571428571" y1="124" x2="477.1428571428571" y2="736" stroke="#d9d2c6" stroke-width="0.5" /><text x="477.1428571428571" y="756" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#7a766f">20</text><line x1="605.7142857142857" y1="124" x2="605.7142857142857" y2="736" stroke="#d9d2c6" stroke-width="0.5" /><text x="605.7142857142857" y="756" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#7a766f">30</text><line x1="734.2857142857142" y1="124" x2="734.2857142857142" y2="736" stroke="#d9d2c6" stroke-width="0.5" /><text x="734.2857142857142" y="756" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#7a766f">40</text><line x1="862.8571428571429" y1="124" x2="862.8571428571429" y2="736" stroke="#d9d2c6" stroke-width="0.5" /><text x="862.8571428571429" y="756" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#7a766f">50</text><line x1="991.4285714285713" y1="124" x2="991.4285714285713" y2="736" stroke="#d9d2c6" stroke-width="0.5" /><text x="991.4285714285713" y="756" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#7a766f">60</text><line x1="1120" y1="124" x2="1120" y2="736" stroke="#d9d2c6" stroke-width="0.5" /><text x="1120" y="756" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#7a766f">70</text>
+  
+    <text x="206" y="155" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="#1b1a17">New York, NY</text>
+    <rect x="220" y="137.6" width="848.5714285714286" height="24.8" fill="#b3361f" />
+    <text x="1076.5714285714284" y="155" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#4a4742" font-weight="600">66</text>
+  
+    <text x="206" y="195" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="#1b1a17">San Francisco, CA</text>
+    <rect x="220" y="177.6" width="771.4285714285713" height="24.8" fill="#b3361f" />
+    <text x="999.4285714285713" y="195" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#4a4742" font-weight="600">60</text>
+  
+    <text x="206" y="235" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="#1b1a17">San Jose, CA</text>
+    <rect x="220" y="217.6" width="758.5714285714286" height="24.8" fill="#b3361f" />
+    <text x="986.5714285714286" y="235" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#4a4742" font-weight="600">59</text>
+  
+    <text x="206" y="275" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="#1b1a17">Boston, MA</text>
+    <rect x="220" y="257.6" width="720" height="24.8" fill="#b3361f" />
+    <text x="948" y="275" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#4a4742" font-weight="600">56</text>
+  
+    <text x="206" y="315" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="#1b1a17">Los Angeles, CA</text>
+    <rect x="220" y="297.6" width="694.2857142857143" height="24.8" fill="#b3361f" />
+    <text x="922.2857142857143" y="315" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#4a4742" font-weight="600">54</text>
+  
+    <text x="206" y="355" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="#1b1a17">Honolulu, HI</text>
+    <rect x="220" y="337.6" width="655.7142857142857" height="24.8" fill="#b3361f" />
+    <text x="883.7142857142857" y="355" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#4a4742" font-weight="600">51</text>
+  
+    <text x="206" y="395" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="#1b1a17">San Diego, CA</text>
+    <rect x="220" y="377.6" width="655.7142857142857" height="24.8" fill="#b3361f" />
+    <text x="883.7142857142857" y="395" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#4a4742" font-weight="600">51</text>
+  
+    <text x="206" y="435" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="#1b1a17">Washington DC, DC</text>
+    <rect x="220" y="417.6" width="642.8571428571429" height="24.8" fill="#b3361f" />
+    <text x="870.8571428571429" y="435" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#4a4742" font-weight="600">50</text>
+  
+    <text x="206" y="475" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="#1b1a17">Portland, OR</text>
+    <rect x="220" y="457.6" width="527.1428571428572" height="24.8" fill="#e0a89c" />
+    <text x="755.1428571428572" y="475" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#4a4742" font-weight="600">41</text>
+  
+    <text x="206" y="515" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="#1b1a17">Seattle, WA</text>
+    <rect x="220" y="497.6" width="514.2857142857142" height="24.8" fill="#e0a89c" />
+    <text x="742.2857142857142" y="515" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#4a4742" font-weight="600">40</text>
+  
+    <text x="206" y="555" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="#1b1a17">Sacramento, CA</text>
+    <rect x="220" y="537.6" width="501.42857142857144" height="24.8" fill="#e0a89c" />
+    <text x="729.4285714285714" y="555" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#4a4742" font-weight="600">39</text>
+  
+    <text x="206" y="595" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="#1b1a17">Miami, FL</text>
+    <rect x="220" y="577.6" width="488.57142857142856" height="24.8" fill="#e0a89c" />
+    <text x="716.5714285714286" y="595" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#4a4742" font-weight="600">38</text>
+  
+    <text x="206" y="635" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="#1b1a17">Denver, CO</text>
+    <rect x="220" y="617.6" width="488.57142857142856" height="24.8" fill="#e0a89c" />
+    <text x="716.5714285714286" y="635" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#4a4742" font-weight="600">38</text>
+  
+    <text x="206" y="675" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="#1b1a17">Chicago, IL</text>
+    <rect x="220" y="657.6" width="488.57142857142856" height="24.8" fill="#e0a89c" />
+    <text x="716.5714285714286" y="675" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#4a4742" font-weight="600">38</text>
+  
+    <text x="206" y="715" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="18" fill="#1b1a17">Minneapolis, MN</text>
+    <rect x="220" y="697.6" width="462.85714285714283" height="24.8" fill="#e0a89c" />
+    <text x="690.8571428571429" y="715" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#4a4742" font-weight="600">36</text>
+  
+
+  <text x="670" y="782" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#7a766f">QUIET-BROKE SCORE  ·  HIGHER = MORE SQUEEZED</text>
+</svg>
