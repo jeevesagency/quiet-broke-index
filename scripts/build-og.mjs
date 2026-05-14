@@ -52,8 +52,8 @@ const LINE = '#d9d2c6';
 
 // Build SVG. Use Georgia (Fraunces fallback per the site CSS) for serif headlines,
 // system sans for the supporting text.
-const SERIF = 'Georgia, "Times New Roman", serif';
-const SANS = '-apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif';
+const SERIF = "Georgia, 'Times New Roman', serif";
+const SANS = "Helvetica, Arial, sans-serif";
 
 const cardX = 76;
 const cardY = 410;
@@ -82,10 +82,10 @@ const svg = `<?xml version="1.0" encoding="UTF-8"?>
   <!-- eyebrow -->
   <text x="76" y="92" font-family="${SANS}" font-size="18" fill="${INK_MUTE}" letter-spacing="2.2" font-weight="500">HENRY FINANCE RESEARCH · v0.1</text>
 
-  <!-- headline -->
-  <text x="76" y="190" font-family="${SERIF}" font-size="84" font-weight="700" fill="${INK}" letter-spacing="-2">The </text>
-  <text x="206" y="190" font-family="${SERIF}" font-size="84" font-weight="700" font-style="italic" fill="${ACCENT}" letter-spacing="-2">Quiet-Broke</text>
-  <text x="708" y="190" font-family="${SERIF}" font-size="84" font-weight="700" fill="${INK}" letter-spacing="-2"> Index</text>
+  <!-- headline: render as one tspan group so we get correct kerning between words -->
+  <text x="76" y="190" font-family="${SERIF}" font-size="84" font-weight="700" fill="${INK}" letter-spacing="-2">
+    <tspan>The</tspan><tspan dx="22" font-style="italic" fill="${ACCENT}">Quiet-Broke</tspan><tspan dx="22">Index</tspan>
+  </text>
 
   <!-- subhead -->
   <text x="76" y="260" font-family="${SERIF}" font-size="32" fill="${INK_SOFT}">How squeezed is a $400K household in your city?</text>
@@ -108,17 +108,16 @@ const svgPath = path.join(ASSETS, 'og.svg');
 const pngPath = path.join(ASSETS, 'og.png');
 fs.writeFileSync(svgPath, svg);
 
-// Rasterize. ImageMagick handles SVG via librsvg/MSVG.
+// Rasterize via rsvg-convert (librsvg). Renders text properly using local fonts.
 try {
-  execFileSync('magick', [
-    '-background', BG,
-    '-density', '144',
-    svgPath,
-    '-resize', '1200x630',
-    pngPath
+  execFileSync('rsvg-convert', [
+    '-w', '1200',
+    '-h', '630',
+    '-o', pngPath,
+    svgPath
   ], { stdio: 'inherit' });
   console.log('Wrote', pngPath);
 } catch (e) {
-  console.error('ImageMagick rasterize failed:', e.message);
+  console.error('rsvg-convert failed:', e.message);
   process.exit(1);
 }
