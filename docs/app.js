@@ -287,6 +287,264 @@
     window.open('https://substack.com/note?utm_source=quietbroke', '_blank', 'noopener');
   });
 
+  // ---- share card (canvas) ----
+
+  // Pre-load both web fonts so canvas drawText uses them properly.
+  // The fonts are already linked via Google Fonts in the <head>;
+  // document.fonts.load() ensures they are decoded before we draw.
+  async function ensureFontsLoaded() {
+    try {
+      await Promise.all([
+        document.fonts.load('700 96px Fraunces'),
+        document.fonts.load('600 36px Fraunces'),
+        document.fonts.load('500 16px Inter'),
+        document.fonts.load('400 14px Inter'),
+      ]);
+    } catch (e) {
+      // non-fatal — fallback fonts render fine
+    }
+  }
+
+  function buildShareCanvas(c, r) {
+    const W = 1200, H = 630;
+    const canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+
+    // --- palette ---
+    const BG      = '#f7f4ee';
+    const CARD_BG = '#fffdf8';
+    const INK     = '#1b1a17';
+    const INK_S   = '#4a4742';
+    const INK_M   = '#7a766f';
+    const ACCENT  = '#b3361f';
+    const LINE    = '#d9d2c6';
+    const LINE_S  = '#ebe6dc';
+    const ACCENT_S= '#f3dfd6';
+
+    // background
+    ctx.fillStyle = BG;
+    ctx.fillRect(0, 0, W, H);
+
+    // top accent stripe
+    ctx.fillStyle = ACCENT;
+    ctx.fillRect(0, 0, W, 7);
+
+    // --- brand eyebrow ---
+    ctx.fillStyle = ACCENT;
+    ctx.font = "italic 600 15px Fraunces, Georgia, serif";
+    ctx.letterSpacing = '2px';
+    ctx.fillText('THE QUIET-BROKE INDEX', 72, 58);
+    ctx.letterSpacing = '0px';
+
+    const cityLabel = c.name + ', ' + c.state;
+    const v = verdict(r.score);
+
+    // --- big score area ---
+    const scoreX = 72;
+    // Score number baseline
+    const scoreFontSize = 120;
+    ctx.fillStyle = INK;
+    ctx.font = `700 ${scoreFontSize}px Fraunces, Georgia, serif`;
+    ctx.fillText(String(r.score), scoreX, 210);
+
+    // " / 100" suffix
+    ctx.font = `700 ${scoreFontSize}px Fraunces, Georgia, serif`;
+    const bigW = ctx.measureText(String(r.score)).width;
+    ctx.font = "400 26px Fraunces, Georgia, serif";
+    ctx.fillStyle = INK_M;
+    ctx.fillText('/ 100', scoreX + bigW + 10, 210);
+
+    // verdict label — word-wrap at ~900px wide
+    const verdictMaxW = 900;
+    ctx.font = "600 34px Fraunces, Georgia, serif";
+    const verdictWords = v.label.split(' ');
+    let verdictLines = [];
+    let line = '';
+    for (const word of verdictWords) {
+      const test = line ? line + ' ' + word : word;
+      if (ctx.measureText(test).width > verdictMaxW && line) {
+        verdictLines.push(line);
+        line = word;
+      } else {
+        line = test;
+      }
+    }
+    if (line) verdictLines.push(line);
+
+    const verdictBaseY = 258;
+    verdictLines.forEach((ln, i) => {
+      ctx.font = "600 34px Fraunces, Georgia, serif";
+      ctx.fillStyle = INK;
+      ctx.fillText(ln, scoreX, verdictBaseY + i * 42);
+    });
+
+    // city name
+    ctx.font = "500 18px Inter, Helvetica, Arial, sans-serif";
+    ctx.fillStyle = INK_M;
+    ctx.fillText(cityLabel, scoreX, verdictBaseY + verdictLines.length * 42 + 8);
+
+    // --- divider ---
+    const divY = verdictBaseY + verdictLines.length * 42 + 38;
+    ctx.strokeStyle = LINE;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(72, divY);
+    ctx.lineTo(W - 72, divY);
+    ctx.stroke();
+
+    // --- line items band ---
+    // Distribute remaining space (minus footer ~40px) evenly across 5 rows
+    const footerH = 44;
+    const available = H - divY - 16 - footerH;
+    const rowH = Math.floor(available / 5);
+    const bandY = divY + 16;
+    const labelW = 130;
+    const barAreaX = 72 + labelW + 16;
+    const barAreaW = W - 72 - barAreaX - 200;
+    const valX = W - 72;
+
+    const lines = [
+      { label: 'Tax',          amt: r.f.eff_tax * r.f.hhi,  share: r.f.tax_share },
+      { label: 'Housing',      amt: r.f.housing_yr,          share: r.f.housing_yr / r.f.hhi },
+      { label: 'Childcare',    amt: r.f.childcare_yr,        share: r.f.childcare_yr / r.f.hhi },
+      { label: 'Healthcare',   amt: r.f.health_yr,           share: r.f.health_yr / r.f.hhi },
+      { label: 'Transport',    amt: r.f.transport_yr,        share: r.f.transport_yr / r.f.hhi },
+    ];
+    const maxShare = Math.max(...lines.map(l => l.share));
+
+    lines.forEach((ln, i) => {
+      const y = bandY + i * rowH;
+      const midY = y + rowH / 2;
+
+      // label
+      ctx.font = "500 14px Inter, Helvetica, Arial, sans-serif";
+      ctx.fillStyle = INK_S;
+      ctx.fillText(ln.label, 72, midY + 5);
+
+      // bar track
+      const barH = 8;
+      const barY = midY - barH / 2;
+      ctx.fillStyle = LINE_S;
+      ctx.beginPath();
+      ctx.roundRect(barAreaX, barY, barAreaW, barH, 4);
+      ctx.fill();
+
+      // bar fill
+      const fillW = Math.round((ln.share / maxShare) * barAreaW);
+      ctx.fillStyle = ACCENT;
+      ctx.beginPath();
+      ctx.roundRect(barAreaX, barY, fillW, barH, 4);
+      ctx.fill();
+
+      // dollar amount
+      ctx.font = "600 14px Inter, Helvetica, Arial, sans-serif";
+      ctx.fillStyle = INK;
+      ctx.textAlign = 'right';
+      ctx.fillText(fmt$(ln.amt) + '/yr', valX, midY + 4);
+
+      // percent
+      ctx.font = "400 12px Inter, Helvetica, Arial, sans-serif";
+      ctx.fillStyle = INK_M;
+      ctx.textAlign = 'right';
+      ctx.fillText('(' + pct(ln.share) + ')', valX, midY + 18);
+      ctx.textAlign = 'left';
+    });
+
+    // --- footer ---
+    const footY = H - 18;
+    ctx.fillStyle = INK_M;
+    ctx.font = "400 13px Inter, Helvetica, Arial, sans-serif";
+    ctx.fillText('quietbrokeindex.com  ·  Henry Finance research  ·  henryfinance.substack.com', 72, footY);
+
+    return canvas;
+  }
+
+  async function generateShareCard() {
+    const c = cities.find(x => x.slug === sel.value);
+    if (!c) return;
+    const r = rawScore(c, gatherOverride());
+
+    const btn = $('share-card-download');
+    const origText = btn.textContent;
+    btn.textContent = 'Rendering…';
+    btn.style.opacity = '0.6';
+
+    await ensureFontsLoaded();
+
+    let canvas;
+    try {
+      canvas = buildShareCanvas(c, r);
+    } catch (e) {
+      btn.textContent = origText;
+      btn.style.opacity = '';
+      console.error('Share card render failed', e);
+      return;
+    }
+
+    const slug = c.slug;
+    const score = r.score;
+    const filename = `quiet-broke-${slug}-${score}.png`;
+
+    canvas.toBlob((blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+      btn.textContent = 'Downloaded!';
+      btn.style.opacity = '';
+      setTimeout(() => { btn.textContent = origText; }, 2500);
+    }, 'image/png');
+  }
+
+  async function copyShareCardToClipboard() {
+    const c = cities.find(x => x.slug === sel.value);
+    if (!c) return;
+    const r = rawScore(c, gatherOverride());
+
+    const btn = $('share-card-copy');
+    const origText = btn.textContent;
+    btn.textContent = 'Rendering…';
+    btn.style.opacity = '0.6';
+
+    await ensureFontsLoaded();
+
+    let canvas;
+    try {
+      canvas = buildShareCanvas(c, r);
+    } catch (e) {
+      btn.textContent = origText;
+      btn.style.opacity = '';
+      return;
+    }
+
+    canvas.toBlob(async (blob) => {
+      try {
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+        btn.textContent = 'Copied!';
+        btn.style.opacity = '';
+        setTimeout(() => { btn.textContent = origText; }, 2500);
+      } catch (e) {
+        // Clipboard API not available (non-HTTPS or blocked) — fall back to download
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `quiet-broke-${c.slug}-${r.score}.png`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
+        btn.textContent = 'Downloaded!';
+        btn.style.opacity = '';
+        setTimeout(() => { btn.textContent = origText; }, 2500);
+      }
+    }, 'image/png');
+  }
+
+  $('share-card-download').addEventListener('click', generateShareCard);
+  $('share-card-copy').addEventListener('click', copyShareCardToClipboard);
+
   // Auto-render if URL has params
   const urlParams = new URLSearchParams(location.search);
   if (urlParams.get('city')) {
