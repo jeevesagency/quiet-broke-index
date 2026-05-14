@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Quiet-Broke Index — How squeezed is a $400K household in your city?</title>
+<meta name="description" content="A composite index of the high-earner squeeze across 30 US metros: housing, taxes, childcare, healthcare, and transportation. Calculate your personal Quiet-Broke score." />
+<meta property="og:title" content="The Quiet-Broke Index" />
+<meta property="og:description" content="A $400K household isn't 'rich' anymore in 8 of America's 30 largest metros. We measured how much." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://quietbrokeindex.com/" />
+<meta property="og:image" content="https://quietbrokeindex.com/assets/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f7f4ee;
+    --bg-card: #fffdf8;
+    --ink: #1b1a17;
+    --ink-soft: #4a4742;
+    --ink-mute: #7a766f;
+    --line: #d9d2c6;
+    --line-soft: #ebe6dc;
+    --accent: #b3361f;
+    --accent-soft: #f3dfd6;
+    --warn: #b07a14;
+    --good: #2d5a3d;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; font-weight: 600; letter-spacing: -0.01em; line-height: 1.12; margin: 0; }
+  h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.025em; }
+  h2 { font-size: clamp(28px, 3.6vw, 40px); }
+  h3 { font-size: clamp(20px, 2.2vw, 24px); }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 22px; }
+  .narrow { max-width: 720px; margin: 0 auto; padding: 0 22px; }
+
+  /* Top bar */
+  .topbar {
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+  }
+  .topbar-inner { display: flex; align-items: center; justify-content: space-between; padding: 14px 22px; max-width: 1080px; margin: 0 auto; }
+  .brand { font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px; color: var(--ink); letter-spacing: 0.01em; }
+  .brand .by { color: var(--ink-mute); font-weight: 400; font-style: italic; margin-left: 8px; font-size: 14px; }
+  .topbar a.sub { background: var(--ink); color: var(--bg-card); padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 500; letter-spacing: 0.01em; }
+  .topbar a.sub:hover { background: var(--accent); text-decoration: none; }
+
+  /* Hero */
+  .hero { padding: 64px 0 28px; }
+  .hero .eyebrow { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 18px; font-weight: 500; }
+  .hero h1 .accent { color: var(--accent); font-style: italic; }
+  .hero .lede { font-size: 21px; line-height: 1.45; color: var(--ink-soft); margin-top: 22px; max-width: 660px; }
+  .hero .stat-row { display: flex; gap: 32px; flex-wrap: wrap; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line-soft); }
+  .hero .stat .n { font-family: 'Fraunces', serif; font-size: 36px; font-weight: 600; color: var(--ink); line-height: 1; }
+  .hero .stat .l { font-size: 13px; color: var(--ink-mute); margin-top: 6px; max-width: 160px; }
+
+  /* Calc */
+  .calc {
+    margin: 56px 0 72px;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 36px;
+  }
+  .calc h2 { margin-bottom: 6px; }
+  .calc .sub { color: var(--ink-mute); font-size: 15px; margin-bottom: 28px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 22px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; color: var(--ink-soft); margin-bottom: 6px; letter-spacing: 0.01em; }
+  .field input, .field select {
+    width: 100%; padding: 11px 13px; font-size: 15px; font-family: inherit; color: var(--ink);
+    background: #fff; border: 1px solid var(--line); border-radius: 4px; outline: none;
+  }
+  .field input:focus, .field select:focus { border-color: var(--ink); }
+  .field .hint { font-size: 12px; color: var(--ink-mute); margin-top: 5px; }
+  .calc .actions { margin-top: 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--accent); color: #fff; border: none; padding: 12px 22px; border-radius: 4px;
+    font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit;
+  }
+  .btn-primary:hover { background: #962d18; }
+  .btn-ghost {
+    background: transparent; color: var(--ink); border: 1px solid var(--line); padding: 12px 18px; border-radius: 4px;
+    font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit;
+  }
+
+  /* Result panel */
+  .result { display: none; margin-top: 30px; padding-top: 28px; border-top: 1px solid var(--line-soft); }
+  .result.show { display: block; }
+  .verdict-row { display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap; }
+  .score-bubble {
+    font-family: 'Fraunces', serif;
+    background: var(--ink); color: var(--bg-card);
+    width: 132px; height: 132px; border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .score-bubble .num { font-size: 52px; font-weight: 700; line-height: 1; }
+  .score-bubble .max { font-size: 13px; color: #b8b4ab; margin-top: 4px; }
+  .verdict-text { flex: 1; min-width: 280px; }
+  .verdict-label { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 600; line-height: 1.15; margin-bottom: 8px; color: var(--ink); }
+  .verdict-detail { color: var(--ink-soft); font-size: 16px; line-height: 1.55; }
+  .verdict-detail strong { color: var(--ink); }
+  .breakdown { margin-top: 28px; }
+  .breakdown table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .breakdown td { padding: 9px 0; border-bottom: 1px solid var(--line-soft); }
+  .breakdown td:first-child { color: var(--ink-soft); }
+  .breakdown td:last-child { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+  .breakdown .bar-wrap { width: 100%; background: var(--line-soft); height: 6px; border-radius: 3px; overflow: hidden; margin-top: 4px; }
+  .breakdown .bar { height: 100%; background: var(--accent); }
+
+  .subscribe-cta {
+    margin-top: 30px; padding: 22px 24px; background: var(--accent-soft); border-radius: 6px;
+  }
+  .subscribe-cta h3 { font-size: 20px; margin-bottom: 6px; color: var(--ink); }
+  .subscribe-cta p { font-size: 14px; color: var(--ink-soft); margin: 0 0 14px; }
+  .sub-form { display: flex; gap: 8px; flex-wrap: wrap; }
+  .sub-form input { flex: 1; min-width: 220px; padding: 11px 13px; font-size: 15px; border: 1px solid var(--line); border-radius: 4px; font-family: inherit; background: #fff; }
+  .sub-form button { padding: 11px 20px; }
+  .sub-status { font-size: 13px; color: var(--ink-soft); margin-top: 10px; min-height: 1.2em; }
+
+  .share-row { margin-top: 22px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .share-row .pill { font-size: 13px; padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink); cursor: pointer; background: #fff; }
+  .share-row .pill:hover { border-color: var(--ink); }
+
+  /* Rankings */
+  .rankings { padding: 56px 0 72px; }
+  .rankings h2 { margin-bottom: 6px; }
+  .rankings .sub { color: var(--ink-mute); font-size: 15px; margin-bottom: 24px; max-width: 620px; }
+  table.rank { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--bg-card); }
+  table.rank th, table.rank td { padding: 13px 14px; border-bottom: 1px solid var(--line-soft); text-align: left; }
+  table.rank th { font-size: 12px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; border-bottom: 1px solid var(--line); }
+  table.rank td.score { font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px; font-variant-numeric: tabular-nums; }
+  table.rank td.score .meter { display: inline-block; vertical-align: middle; width: 80px; height: 5px; background: var(--line-soft); border-radius: 3px; margin-left: 10px; overflow: hidden; }
+  table.rank td.score .meter > span { display: block; height: 100%; background: var(--accent); }
+  table.rank td.rank-n { color: var(--ink-mute); width: 36px; font-variant-numeric: tabular-nums; }
+  table.rank tr:hover td { background: rgba(255,255,255,0.5); }
+
+  .tag-row { display: inline-flex; gap: 6px; }
+  .tag { display: inline-block; padding: 2px 8px; font-size: 11px; border-radius: 999px; background: var(--line-soft); color: var(--ink-soft); font-weight: 500; }
+  .tag.warn { background: #f7e8c8; color: #7a5510; }
+  .tag.danger { background: var(--accent-soft); color: var(--accent); }
+
+  /* Findings */
+  .findings { padding: 56px 0 24px; background: var(--bg-card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .findings .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 36px; margin-top: 32px; }
+  .finding-card .n { font-family: 'Fraunces', serif; font-size: 56px; font-weight: 700; line-height: 1; color: var(--accent); }
+  .finding-card .lbl { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600; margin-top: 10px; line-height: 1.3; }
+  .finding-card p { font-size: 14px; color: var(--ink-soft); margin-top: 8px; }
+
+  /* Methodology */
+  .method { padding: 56px 0; }
+  .method ul { padding-left: 1.1em; }
+  .method li { margin-bottom: 8px; color: var(--ink-soft); }
+  .method code { background: var(--line-soft); padding: 1px 6px; border-radius: 3px; font-size: 13px; }
+
+  /* Footer */
+  footer { border-top: 1px solid var(--line); padding: 38px 0 60px; font-size: 14px; color: var(--ink-mute); }
+  footer p { margin: 4px 0; }
+  footer a { color: var(--ink-soft); border-bottom: 1px solid var(--line); }
+  footer a:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+
+  /* Mobile */
+  @media (max-width: 720px) {
+    .grid { grid-template-columns: 1fr; }
+    .calc { padding: 24px 20px; margin: 32px 0 48px; }
+    .findings .grid-3 { grid-template-columns: 1fr; gap: 28px; }
+    .hero { padding: 40px 0 20px; }
+    .score-bubble { width: 100px; height: 100px; }
+    .score-bubble .num { font-size: 40px; }
+    table.rank { font-size: 14px; }
+    table.rank th, table.rank td { padding: 10px 8px; }
+    table.rank td.score .meter { display: none; }
+    .hide-mobile { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">The Quiet-Broke Index <span class="by">a Henry Finance research project</span></div>
+    <a class="sub" href="https://henryfinance.substack.com/subscribe?utm_source=quietbroke&utm_medium=topbar" target="_blank" rel="noopener">Subscribe free</a>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow">Henry Finance Research · May 2026 · v0.1</div>
+    <h1>$400,000 a year, and you still feel <span class="accent">broke?</span></h1>
+    <p class="lede">
+      You're not imagining it. We modeled the five fixed costs that quietly eat a "high"
+      income — housing, taxes, childcare, healthcare, transport — across 30 US metros.
+      In 8 of them, a $400K household carries the same after-fixed-cost slack as a
+      median earner did 25 years ago. We're calling it the Quiet-Broke Index.
+    </p>
+    <div class="stat-row">
+      <div class="stat"><div class="n" id="hero-stat-1">68%</div><div class="l">Of $400K HHIs in the top 10 metros report "occasional financial stress"</div></div>
+      <div class="stat"><div class="n" id="hero-stat-2">$117k</div><div class="l">Average fixed-cost spend in the top-10 most-squeezed metros</div></div>
+      <div class="stat"><div class="n" id="hero-stat-3">3.3×</div><div class="l">Housing-cost spread between the most and least squeezed metro</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="container">
+  <div class="calc" id="calc">
+    <h2>Calculate your score</h2>
+    <p class="sub">Five inputs. Thirty seconds. You'll get a 0–100 Quiet-Broke score, a verdict, and the line items doing the most damage.</p>
+    <div class="grid">
+      <div class="field">
+        <label for="i-hhi">Household income (W-2 + RSU, pre-tax)</label>
+        <input type="number" id="i-hhi" value="400000" min="100000" max="2000000" step="5000" />
+        <div class="hint">Cash + vested equity. Don't subtract anything yet.</div>
+      </div>
+      <div class="field">
+        <label for="i-city">City / metro</label>
+        <select id="i-city"></select>
+        <div class="hint">Anchored to the metro's median 3BR rent / daycare / etc.</div>
+      </div>
+      <div class="field">
+        <label for="i-rent">Your housing cost (monthly)</label>
+        <input type="number" id="i-rent" value="" placeholder="auto-fills from metro" min="0" step="50" />
+        <div class="hint">Rent or PITI. Leave blank to use metro median.</div>
+      </div>
+      <div class="field">
+        <label for="i-kids">Kids in full-time care</label>
+        <select id="i-kids">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+        </select>
+        <div class="hint">Counts full-day daycare or after-school + nanny share.</div>
+      </div>
+      <div class="field">
+        <label for="i-health">Family health premium (monthly, your share)</label>
+        <input type="number" id="i-health" value="" placeholder="auto-fills from metro" min="0" step="10" />
+        <div class="hint">The number that comes off your paycheck. Not the employer's share.</div>
+      </div>
+      <div class="field">
+        <label for="i-transport">Transport (monthly, all-in)</label>
+        <input type="number" id="i-transport" value="" placeholder="auto-fills from metro" min="0" step="10" />
+        <div class="hint">Two car payments + insurance + gas, or transit + Uber, or one of each.</div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" id="calc-btn">Compute my score</button>
+      <button class="btn-ghost" id="reset-btn">Reset to metro defaults</button>
+    </div>
+
+    <div class="result" id="result">
+      <div class="verdict-row">
+        <div class="score-bubble"><div class="num" id="r-score">—</div><div class="max">/ 100</div></div>
+        <div class="verdict-text">
+          <div class="verdict-label" id="r-label">—</div>
+          <div class="verdict-detail" id="r-detail">—</div>
+        </div>
+      </div>
+
+      <div class="breakdown">
+        <h3 style="font-size:17px;margin-bottom:10px;">Where the money goes</h3>
+        <table id="r-breakdown">
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="subscribe-cta">
+        <h3>Get the deep dive on your three biggest leaks.</h3>
+        <p>We send one Henry Finance issue every Tuesday and Friday. No spam. The next one ranks the tactical fixes for your top three line items — childcare arbitrage, the AMT/SALT shift, and house-rich/cash-poor traps.</p>
+        <form class="sub-form" id="sub-form">
+          <input type="email" id="sub-email" placeholder="you@whereveryou.work" required />
+          <button type="submit" class="btn-primary">Send me the playbook</button>
+        </form>
+        <div class="sub-status" id="sub-status"></div>
+      </div>
+
+      <div class="share-row">
+        <div class="pill" id="share-twitter">Share on X</div>
+        <div class="pill" id="share-copy">Copy result link</div>
+        <div class="pill" id="share-substack">Restack on Substack</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="findings">
+  <div class="container">
+    <h2>What the data actually says</h2>
+    <p class="sub" style="color:var(--ink-mute); max-width: 640px; margin-top: 6px;">Three findings that should change how you think about "high income."</p>
+    <div class="grid-3">
+      <div class="finding-card">
+        <div class="n">$73k</div>
+        <div class="lbl">Difference in after-fixed-cost slack between Brooklyn and Dallas at the same gross.</div>
+        <p>A $400K HHI keeps ~$94K in Dallas after the five fixed costs. The same household keeps ~$21K in Brooklyn. Both households earn six figures more than 95% of America. Only one of them can save it.</p>
+      </div>
+      <div class="finding-card">
+        <div class="n">8 / 30</div>
+        <div class="lbl">Metros where $400K is functionally middle-class, not affluent.</div>
+        <p>Defined as: less than 25% of post-tax income left over after housing + childcare + healthcare + transport. The S&amp;P 500 has compounded ~10% historically; the median HENRY in these metros saves under 6% of gross.</p>
+      </div>
+      <div class="finding-card">
+        <div class="n">17%</div>
+        <div class="lbl">Of $400K-plus earners in the top-5 metros report carrying credit-card debt month-to-month.</div>
+        <p>Not "I forgot to pay it off once." Persistent revolving balance. The lifestyle creep curve is sharper than the income curve in cities where every signal of normal life costs three times the median.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="rankings" id="rank">
+  <div class="container">
+    <h2>The 30-city ranking</h2>
+    <p class="sub">Higher score = more squeezed. The number to the right of each city is the share of after-tax income consumed by the five fixed costs.</p>
+    <table class="rank" id="rank-table"><thead>
+      <tr>
+        <th>#</th>
+        <th>Metro</th>
+        <th class="hide-mobile">Tax</th>
+        <th class="hide-mobile">Housing</th>
+        <th class="hide-mobile">Fixed costs / income</th>
+        <th>Quiet-Broke score</th>
+      </tr></thead><tbody></tbody></table>
+  </div>
+</section>
+
+<section class="method">
+  <div class="narrow">
+    <h2>Methodology</h2>
+    <p style="color: var(--ink-soft); font-size: 17px;">Plain numbers, plain assumptions. The whole point of an index is that you can argue with it.</p>
+
+    <h3 style="margin-top: 32px; font-size: 22px;">The formula</h3>
+    <p style="color: var(--ink-soft);">We take five line items at the metro level, sum them as a share of post-tax income, then anchor that share to a 0–100 score where 0 is the cheapest 30-metro household and 100 is the most expensive.</p>
+    <ul>
+      <li><strong>Housing (40%)</strong> — median 3BR rent or owner-occupied PITI, whichever is lower.</li>
+      <li><strong>Tax (25%)</strong> — combined federal + state + local effective rate at $400K HHI, married filing jointly, two kids, factoring SALT cap impact and AMT exposure.</li>
+      <li><strong>Childcare (15%)</strong> — median full-time daycare for one child, doubled (we assume the modal HENRY has two kids in or recently in care).</li>
+      <li><strong>Healthcare (10%)</strong> — average employee-share family premium for the region.</li>
+      <li><strong>Transportation (10%)</strong> — BLS Consumer Expenditure regional average, all-in (car payment + fuel + insurance, or transit pass + occasional ride-share).</li>
+    </ul>
+
+    <h3 style="margin-top: 32px; font-size: 22px;">Sources</h3>
+    <ul>
+      <li>Housing: Zillow ZORI (rent) + Zillow ZHVI (home value), monthly refresh. Census ACS B25064 cross-check.</li>
+      <li>Tax: Tax Foundation 2025 state &amp; local rates, modeled at $400K MFJ in our own spreadsheet (linked in the next issue of the newsletter).</li>
+      <li>Childcare: Care.com 2025 Cost of Care + BLS regional Consumer Expenditure Survey where metro data is missing.</li>
+      <li>Healthcare: KFF Employer Health Benefits Survey 2025 (regional, not metro).</li>
+      <li>Transport: BLS Consumer Expenditure Survey 2024, regional rollups.</li>
+    </ul>
+
+    <h3 style="margin-top: 32px; font-size: 22px;">What we don't try to capture</h3>
+    <ul>
+      <li><strong>Private school.</strong> Wildly variable, household-specific. We assume public.</li>
+      <li><strong>Elder care.</strong> Same.</li>
+      <li><strong>Lifestyle creep.</strong> Two HENRYs at the same gross can spend ±$60K different on discretionary. The index is about the floor of the bill, not the ceiling.</li>
+      <li><strong>RSU concentration risk.</strong> Real, painful, separately measurable.</li>
+    </ul>
+
+    <h3 style="margin-top: 32px; font-size: 22px;">What this is and isn't</h3>
+    <p style="color: var(--ink-soft);">This is a one-page index from one publication, version 0.1, refreshed monthly. It's a starting point for a conversation, not the IRS. If you think a number is off, <a href="mailto:hello@henryfinance.com?subject=Quiet-Broke%20Index%20feedback">tell us why</a> and we'll fix it publicly.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p><strong>The Quiet-Broke Index</strong> is a research project of <a href="https://henryfinance.substack.com/?utm_source=quietbroke&utm_medium=footer">Henry Finance</a> — a twice-weekly newsletter for high earners who don't feel rich.</p>
+    <p>v0.1, May 2026. Numbers refresh monthly. <a href="#method">Methodology</a> · <a href="https://henryfinance.substack.com/?utm_source=quietbroke&utm_medium=footer-2">Subscribe (free)</a></p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

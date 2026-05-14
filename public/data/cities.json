@@ -1,0 +1,54 @@
+{
+  "_meta": {
+    "version": "0.1-draft",
+    "as_of": "2026-05",
+    "income_band_label": "$400K HHI, married filing jointly, two kids",
+    "default_hhi": 400000,
+    "default_filing_status": "MFJ",
+    "default_household": { "adults": 2, "kids": 2 },
+    "note": "v0.1 uses pre-aggregated estimates from public sources. Methodology + sources page lists each input by metro. Numbers refresh monthly."
+  },
+  "weights": {
+    "housing": 0.40,
+    "tax": 0.25,
+    "childcare": 0.15,
+    "healthcare": 0.10,
+    "transport": 0.10
+  },
+  "anchors": {
+    "score_min_ratio": 0.18,
+    "score_max_ratio": 0.78
+  },
+  "cities": [
+    { "slug": "san-jose-ca",        "name": "San Jose",          "state": "CA", "median_3br_rent_mo": 4350, "eff_combined_tax_400k": 0.398, "median_ft_daycare_mo": 2380, "family_health_premium_mo": 740, "commute_cost_mo": 520 },
+    { "slug": "san-francisco-ca",   "name": "San Francisco",     "state": "CA", "median_3br_rent_mo": 4500, "eff_combined_tax_400k": 0.398, "median_ft_daycare_mo": 2640, "family_health_premium_mo": 740, "commute_cost_mo": 470 },
+    { "slug": "new-york-ny",        "name": "New York",          "state": "NY", "median_3br_rent_mo": 4900, "eff_combined_tax_400k": 0.421, "median_ft_daycare_mo": 2580, "family_health_premium_mo": 760, "commute_cost_mo": 420 },
+    { "slug": "honolulu-hi",        "name": "Honolulu",          "state": "HI", "median_3br_rent_mo": 3800, "eff_combined_tax_400k": 0.412, "median_ft_daycare_mo": 1820, "family_health_premium_mo": 700, "commute_cost_mo": 460 },
+    { "slug": "boston-ma",          "name": "Boston",            "state": "MA", "median_3br_rent_mo": 4250, "eff_combined_tax_400k": 0.402, "median_ft_daycare_mo": 2480, "family_health_premium_mo": 720, "commute_cost_mo": 440 },
+    { "slug": "los-angeles-ca",     "name": "Los Angeles",       "state": "CA", "median_3br_rent_mo": 4100, "eff_combined_tax_400k": 0.398, "median_ft_daycare_mo": 1980, "family_health_premium_mo": 730, "commute_cost_mo": 510 },
+    { "slug": "san-diego-ca",       "name": "San Diego",         "state": "CA", "median_3br_rent_mo": 3950, "eff_combined_tax_400k": 0.398, "median_ft_daycare_mo": 1880, "family_health_premium_mo": 710, "commute_cost_mo": 480 },
+    { "slug": "washington-dc",      "name": "Washington DC",     "state": "DC", "median_3br_rent_mo": 3700, "eff_combined_tax_400k": 0.395, "median_ft_daycare_mo": 2350, "family_health_premium_mo": 720, "commute_cost_mo": 450 },
+    { "slug": "seattle-wa",         "name": "Seattle",           "state": "WA", "median_3br_rent_mo": 3500, "eff_combined_tax_400k": 0.341, "median_ft_daycare_mo": 2380, "family_health_premium_mo": 700, "commute_cost_mo": 470 },
+    { "slug": "miami-fl",           "name": "Miami",             "state": "FL", "median_3br_rent_mo": 3850, "eff_combined_tax_400k": 0.335, "median_ft_daycare_mo": 1480, "family_health_premium_mo": 730, "commute_cost_mo": 500 },
+    { "slug": "denver-co",          "name": "Denver",            "state": "CO", "median_3br_rent_mo": 3050, "eff_combined_tax_400k": 0.379, "median_ft_daycare_mo": 1720, "family_health_premium_mo": 690, "commute_cost_mo": 460 },
+    { "slug": "portland-or",        "name": "Portland",          "state": "OR", "median_3br_rent_mo": 2950, "eff_combined_tax_400k": 0.412, "median_ft_daycare_mo": 1620, "family_health_premium_mo": 680, "commute_cost_mo": 440 },
+    { "slug": "sacramento-ca",      "name": "Sacramento",        "state": "CA", "median_3br_rent_mo": 2750, "eff_combined_tax_400k": 0.398, "median_ft_daycare_mo": 1580, "family_health_premium_mo": 690, "commute_cost_mo": 500 },
+    { "slug": "chicago-il",         "name": "Chicago",           "state": "IL", "median_3br_rent_mo": 2950, "eff_combined_tax_400k": 0.388, "median_ft_daycare_mo": 1840, "family_health_premium_mo": 700, "commute_cost_mo": 410 },
+    { "slug": "philadelphia-pa",    "name": "Philadelphia",      "state": "PA", "median_3br_rent_mo": 2450, "eff_combined_tax_400k": 0.379, "median_ft_daycare_mo": 1680, "family_health_premium_mo": 700, "commute_cost_mo": 420 },
+    { "slug": "austin-tx",          "name": "Austin",            "state": "TX", "median_3br_rent_mo": 2750, "eff_combined_tax_400k": 0.335, "median_ft_daycare_mo": 1480, "family_health_premium_mo": 690, "commute_cost_mo": 510 },
+    { "slug": "atlanta-ga",         "name": "Atlanta",           "state": "GA", "median_3br_rent_mo": 2350, "eff_combined_tax_400k": 0.383, "median_ft_daycare_mo": 1320, "family_health_premium_mo": 680, "commute_cost_mo": 510 },
+    { "slug": "minneapolis-mn",     "name": "Minneapolis",       "state": "MN", "median_3br_rent_mo": 2450, "eff_combined_tax_400k": 0.402, "median_ft_daycare_mo": 1880, "family_health_premium_mo": 680, "commute_cost_mo": 430 },
+    { "slug": "phoenix-az",         "name": "Phoenix",           "state": "AZ", "median_3br_rent_mo": 2350, "eff_combined_tax_400k": 0.355, "median_ft_daycare_mo": 1280, "family_health_premium_mo": 690, "commute_cost_mo": 490 },
+    { "slug": "dallas-tx",          "name": "Dallas",            "state": "TX", "median_3br_rent_mo": 2350, "eff_combined_tax_400k": 0.335, "median_ft_daycare_mo": 1380, "family_health_premium_mo": 690, "commute_cost_mo": 500 },
+    { "slug": "houston-tx",         "name": "Houston",           "state": "TX", "median_3br_rent_mo": 2150, "eff_combined_tax_400k": 0.335, "median_ft_daycare_mo": 1280, "family_health_premium_mo": 690, "commute_cost_mo": 510 },
+    { "slug": "raleigh-nc",         "name": "Raleigh",           "state": "NC", "median_3br_rent_mo": 2150, "eff_combined_tax_400k": 0.379, "median_ft_daycare_mo": 1280, "family_health_premium_mo": 680, "commute_cost_mo": 480 },
+    { "slug": "charlotte-nc",       "name": "Charlotte",         "state": "NC", "median_3br_rent_mo": 2150, "eff_combined_tax_400k": 0.379, "median_ft_daycare_mo": 1280, "family_health_premium_mo": 680, "commute_cost_mo": 490 },
+    { "slug": "nashville-tn",       "name": "Nashville",         "state": "TN", "median_3br_rent_mo": 2250, "eff_combined_tax_400k": 0.335, "median_ft_daycare_mo": 1280, "family_health_premium_mo": 690, "commute_cost_mo": 480 },
+    { "slug": "tampa-fl",           "name": "Tampa",             "state": "FL", "median_3br_rent_mo": 2350, "eff_combined_tax_400k": 0.335, "median_ft_daycare_mo": 1220, "family_health_premium_mo": 700, "commute_cost_mo": 490 },
+    { "slug": "kansas-city-mo",     "name": "Kansas City",       "state": "MO", "median_3br_rent_mo": 1850, "eff_combined_tax_400k": 0.388, "median_ft_daycare_mo": 1180, "family_health_premium_mo": 670, "commute_cost_mo": 440 },
+    { "slug": "indianapolis-in",    "name": "Indianapolis",      "state": "IN", "median_3br_rent_mo": 1750, "eff_combined_tax_400k": 0.379, "median_ft_daycare_mo": 1150, "family_health_premium_mo": 670, "commute_cost_mo": 430 },
+    { "slug": "pittsburgh-pa",      "name": "Pittsburgh",        "state": "PA", "median_3br_rent_mo": 1850, "eff_combined_tax_400k": 0.379, "median_ft_daycare_mo": 1180, "family_health_premium_mo": 680, "commute_cost_mo": 420 },
+    { "slug": "detroit-mi",         "name": "Detroit",           "state": "MI", "median_3br_rent_mo": 1650, "eff_combined_tax_400k": 0.388, "median_ft_daycare_mo": 1150, "family_health_premium_mo": 680, "commute_cost_mo": 440 },
+    { "slug": "cleveland-oh",       "name": "Cleveland",         "state": "OH", "median_3br_rent_mo": 1550, "eff_combined_tax_400k": 0.383, "median_ft_daycare_mo": 1120, "family_health_premium_mo": 670, "commute_cost_mo": 410 }
+  ]
+}
