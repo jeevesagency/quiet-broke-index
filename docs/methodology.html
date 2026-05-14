@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Methodology — The Quiet-Broke Index</title>
+<meta name="description" content="How the Quiet-Broke Index is built: the five line items, the weights, the data sources, the assumptions, and what could be wrong with it. Henry Finance, v0.1." />
+<link rel="canonical" href="https://jeevesagency.github.io/quiet-broke-index/methodology.html" />
+<meta property="og:title" content="The Quiet-Broke Index — Methodology" />
+<meta property="og:description" content="How we measure the high-earner squeeze across 30 US metros. Formula, weights, sources, and the things we can't capture." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jeevesagency.github.io/quiet-broke-index/methodology.html" />
+<meta property="og:image" content="https://jeevesagency.github.io/quiet-broke-index/assets/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><a href="./">The Quiet-Broke Index</a> <span class="by">a Henry Finance research project</span></div>
+    <a class="sub" href="https://henryfinance.substack.com/subscribe?utm_source=quietbroke&utm_medium=methodology" target="_blank" rel="noopener">Subscribe free</a>
+  </div>
+</div>
+
+<section class="method">
+  <div class="narrow">
+    <div class="eyebrow" style="font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 18px; font-weight: 500;"><a href="./" style="color:inherit; border-bottom:1px solid var(--line);">← The Quiet-Broke Index</a> · v0.1 · May 2026</div>
+    <h1 style="font-size: clamp(34px, 5vw, 52px);">Methodology</h1>
+    <p class="lede" style="margin-top: 22px;">Plain numbers, plain assumptions. The whole point of an index is that you can argue with it. Here's how the score gets built, every input it uses, and the things we know it doesn't capture.</p>
+
+    <h2 style="margin-top: 48px; font-size: 28px;">The formula</h2>
+    <p>We take five line items at the metro level, normalize each one to a 0–1 sub-score over a sensible range, weight them, and sum to a 0–100 Quiet-Broke score. Higher = more squeezed.</p>
+    <p style="background: var(--line-soft); padding: 14px 18px; border-radius: 4px; font-family: 'Fraunces', Georgia, serif; font-size: 16px; line-height: 1.6;">
+      <code>score = 100 × (0.40 × housing<sub>n</sub> + 0.25 × tax<sub>n</sub> + 0.15 × childcare<sub>n</sub> + 0.10 × healthcare<sub>n</sub> + 0.10 × transport<sub>n</sub>)</code>
+    </p>
+    <p>Each <code>x<sub>n</sub></code> is the line item as a share of gross income, clamped to a normalization range tuned to where $400K households actually sit. Housing, for example, normalizes between 6% of gross (a Cleveland-style baseline) and 20% of gross (a coastal-metro ceiling). Above 20% you're saturated at 1.0 — additional rent doesn't make you "more than maximally squeezed."</p>
+
+    <h2 style="margin-top: 40px; font-size: 28px;">The five line items</h2>
+    <ul>
+      <li><strong>Housing (40%)</strong> — median 3BR rent, monthly. For owners, this is the rough rent-equivalent of the same unit, not PITI. We weight housing heaviest because it's the single largest line in every metro we measured, and it's the input with the most spread (3.3× between the cheapest and most expensive metro).</li>
+      <li><strong>Tax (25%)</strong> — combined federal + state + local effective rate at $400K HHI, married filing jointly, two kids, factoring SALT cap impact and AMT exposure. We use effective (not marginal) so the number reflects what actually leaves the paycheck.</li>
+      <li><strong>Childcare (15%)</strong> — median full-time daycare for one child. The calculator multiplies by the number of kids you actually have in care; the headline score assumes two (the modal HENRY).</li>
+      <li><strong>Healthcare (10%)</strong> — average employee-share family premium for the region. Employer-sponsored insurance only; we don't try to model ACA exchange premiums separately.</li>
+      <li><strong>Transportation (10%)</strong> — BLS Consumer Expenditure regional average, all-in: car payment + fuel + insurance, or transit pass + rideshare, or one of each.</li>
+    </ul>
+
+    <h2 style="margin-top: 40px; font-size: 28px;">Why these weights</h2>
+    <p>The weights aren't from a regression — they're a deliberate editorial choice. Housing gets 40% because it's the line that moves the most between metros and the one HENRYs report feeling most. Tax gets 25% because it sets the post-tax denominator everything else fits inside. Childcare gets 15% because at the modal household it's the third-largest dollar line. Healthcare and transport split the remaining 20% because they're meaningful but relatively flat across metros.</p>
+    <p>If you re-ran the index with equal 20% weights, the top of the list would still be New York / San Francisco / San Jose / Boston, and the bottom would still be Cleveland / Houston / Nashville. The weighting changes the middle, not the shape.</p>
+
+    <h2 style="margin-top: 40px; font-size: 28px;">Sources</h2>
+    <ul>
+      <li><strong>Housing:</strong> <a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener">Zillow ZORI</a> (rent index) and <a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener">Zillow ZHVI</a> (home value index), monthly refresh. Cross-checked against <a href="https://data.census.gov/table/ACSDT5Y2023.B25064" target="_blank" rel="noopener">Census ACS B25064</a> (median gross rent).</li>
+      <li><strong>Tax:</strong> <a href="https://taxfoundation.org/data/all/state/state-income-tax-rates/" target="_blank" rel="noopener">Tax Foundation 2025 state &amp; local rates</a>, modeled at $400K MFJ with two dependents, SALT cap applied, AMT estimated. Federal brackets from the <a href="https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2025" target="_blank" rel="noopener">IRS 2025 inflation adjustments</a>.</li>
+      <li><strong>Childcare:</strong> <a href="https://www.care.com/c/how-much-does-child-care-cost/" target="_blank" rel="noopener">Care.com 2025 Cost of Care</a> report. Where metro-level numbers are missing or stale, we fall back to <a href="https://www.bls.gov/cex/" target="_blank" rel="noopener">BLS Consumer Expenditure Survey</a> regional childcare rollups.</li>
+      <li><strong>Healthcare:</strong> <a href="https://www.kff.org/health-costs/report/employer-health-benefits-survey/" target="_blank" rel="noopener">KFF Employer Health Benefits Survey 2025</a>, regional (Northeast / Midwest / South / West), employee-share family premium.</li>
+      <li><strong>Transportation:</strong> <a href="https://www.bls.gov/cex/tables.htm" target="_blank" rel="noopener">BLS Consumer Expenditure Survey 2024</a>, regional rollups for vehicle ownership + transit + maintenance.</li>
+    </ul>
+    <p style="font-size: 14px; color: var(--ink-mute); margin-top: 12px;">All inputs and per-metro numbers live in <a href="data/cities.json"><code>docs/data/cities.json</code></a> in the source repo. The numbers refresh monthly.</p>
+
+    <h2 style="margin-top: 40px; font-size: 28px;">What this index doesn't capture</h2>
+    <p>This is the part most data projects skip. It shouldn't be.</p>
+    <div class="warn-box">
+      <h3>Private school</h3>
+      <p>Wildly variable, household-specific, and load-bearing for a meaningful share of HENRY households in NYC, SF, LA, and DC. We assume public school. If you're paying $35K–$60K per kid per year, your real-life Quiet-Broke score is materially worse than this calculator shows.</p>
+    </div>
+    <div class="warn-box">
+      <h3>Elder care, special needs, medical complications</h3>
+      <p>Same problem. These are catastrophic-tail line items that can dominate a household budget for a year or a decade. We can't fairly average them into a metro number.</p>
+    </div>
+    <div class="warn-box">
+      <h3>Owner vs renter dynamics</h3>
+      <p>We use 3BR rent as the housing input because it's apples-to-apples across metros. A long-time owner with a sub-4% mortgage is paying nothing close to today's market rent — they're functionally less squeezed than our index suggests. A 2024-buyer with PITI on today's prices is more squeezed.</p>
+    </div>
+    <div class="warn-box">
+      <h3>Lifestyle creep</h3>
+      <p>Two HENRYs at the same gross can spend ±$60K differently on discretionary. The index is about the floor of the bill, not the ceiling. If your discretionary is eating you alive, that's a real problem — it's just not the problem this number is trying to measure.</p>
+    </div>
+    <div class="warn-box">
+      <h3>RSU concentration and equity comp variance</h3>
+      <p>We treat $400K as cash-equivalent. In real life a lot of HENRY gross is unvested or single-stock RSU, which has its own risk and tax timing dynamics we're not modeling here.</p>
+    </div>
+
+    <h2 style="margin-top: 40px; font-size: 28px;">What could be wrong</h2>
+    <p>An honest list of where this v0.1 could mislead you:</p>
+    <ul>
+      <li><strong>Metro medians hide neighborhood reality.</strong> The "median 3BR" in New York averages Manhattan and the outer-borough commuter belt. If you live in Brooklyn Heights or Tribeca, your housing line is meaningfully higher than the metro median; if you live in a quiet part of Queens, it's lower. Same for every other metro on the list.</li>
+      <li><strong>The tax number is a model, not your return.</strong> Two $400K HHIs in the same state can have effective rates 3–4 points apart depending on retirement contributions, HSA, dependent-care FSA, deduction strategy, and whether one spouse is self-employed. Treat our number as "the typical W-2 household's effective rate at this income" — not a forecast for your specific return.</li>
+      <li><strong>Childcare data is patchy.</strong> Care.com and BLS both lag the real market by 12–18 months in expensive metros, and the gap between "median daycare" and "what HENRYs in this metro actually pay for daycare" is wider than the data shows. The childcare line in this index is probably understated for the top-10 metros.</li>
+      <li><strong>Healthcare is regional, not metro.</strong> KFF only publishes by Census region, so Boston and Pittsburgh share the same input. That's clearly wrong in absolute terms, but it moves both up or down together — it doesn't change the ranking.</li>
+      <li><strong>Weights are a judgment call.</strong> We argued for these privately and landed on the current split. A defensible person could weight housing at 50% or tax at 30% and get a slightly different middle of the ranking. The top and bottom are robust to reasonable re-weighting.</li>
+      <li><strong>30 metros isn't enough.</strong> We cover the largest US metros plus a few illustrative mid-size ones. If your city isn't here, find the closest match on rent and tax and you'll be within a few points.</li>
+    </ul>
+
+    <h2 style="margin-top: 40px; font-size: 28px;">What this is and isn't</h2>
+    <p>This is a one-page index from one publication, version 0.1, refreshed monthly. It's a starting point for a conversation, not the IRS. Henry Finance writes about money decisions for HENRY households; this is a research project that fell out of one of those decisions and turned out to be more interesting than the original article.</p>
+    <p>If you think a number is off — and you have a source — <a href="mailto:hello@henryfinance.com?subject=Quiet-Broke%20Index%20feedback">email us</a> and we'll fix it publicly. Material corrections get a visible note on the page with the date.</p>
+
+    <div class="subscribe-cta" style="margin-top: 48px;">
+      <h3>Henry Finance — for high earners who don't feel rich.</h3>
+      <p>One free issue every Tuesday and Friday. Frameworks, not formulas. We send the next deep-dive on the highest-leverage line items on this index — childcare arbitrage, the SALT/AMT shift, and house-rich/cash-poor traps.</p>
+      <form class="sub-form" onsubmit="event.preventDefault(); window.open('https://henryfinance.substack.com/subscribe?email=' + encodeURIComponent(this.querySelector('input').value) + '&utm_source=quietbroke&utm_medium=methodology', '_blank', 'noopener');">
+        <input type="email" placeholder="you@whereveryou.work" required />
+        <button type="submit" class="btn-primary">Subscribe (free)</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p><strong>The Quiet-Broke Index</strong> is a research project of <a href="https://henryfinance.substack.com/?utm_source=quietbroke&utm_medium=methodology-footer">Henry Finance</a> — a twice-weekly newsletter for high earners who don't feel rich.</p>
+    <p>v0.1, May 2026. Numbers refresh monthly. <a href="./">Back to the index</a> · <a href="https://henryfinance.substack.com/?utm_source=quietbroke&utm_medium=methodology-footer-2">Subscribe (free)</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
