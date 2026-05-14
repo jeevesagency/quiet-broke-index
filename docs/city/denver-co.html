@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Denver, CO Quiet-Broke Score: 38 / 100 (Rank 13 of 30)</title>
+<meta name="description" content="How squeezed is a $400K household in Denver, CO? Quiet-Broke Index score: 38/100, rank 13 of 30 US metros. Median 3BR rent $3,050/mo, effective tax 37.9%." />
+<link rel="canonical" href="https://jeevesagency.github.io/quiet-broke-index/city/denver-co.html" />
+<meta property="og:title" content="Denver, CO: Quiet-Broke score 38/100" />
+<meta property="og:description" content="How squeezed is a $400K household in Denver, CO? Quiet-Broke Index score: 38/100, rank 13 of 30 US metros. Median 3BR rent $3,050/mo, effective tax 37.9%." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jeevesagency.github.io/quiet-broke-index/city/denver-co.html" />
+<meta property="og:image" content="https://jeevesagency.github.io/quiet-broke-index/assets/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><a href="../">The Quiet-Broke Index</a> <span class="by">a Henry Finance research project</span></div>
+    <a class="sub" href="https://henryfinance.substack.com/subscribe?utm_source=quietbroke&utm_medium=citypage&utm_content=denver-co" target="_blank" rel="noopener">Subscribe free</a>
+  </div>
+</div>
+
+<section class="city-hero">
+  <div class="container">
+    <div class="eyebrow"><a href="../" style="color:inherit; border-bottom:1px solid var(--line);">← The Quiet-Broke Index</a> · CO · v0.1</div>
+    <h1>Denver, CO: <span class="accent">quietly comfortable</span></h1>
+
+    <div class="summary-row">
+      <div class="big-score">
+        <div class="num">38</div>
+        <div class="max">/ 100</div>
+        <div class="rk">Rank 13 / 30</div>
+      </div>
+      <div class="take">
+        <div class="verdict-label">What's distinctive about Denver's squeeze</div>
+        <p>Denver ranks 13 of 30 not because any single line item is brutal, but because all five are above-average at once. Housing is $3,050/month, childcare runs $1,720/kid, and the combined effective tax rate is 37.9%. None of these alone would make the news. Stacked, they consume 60.8% of a $400K gross. After the five fixed costs and taxes, the slack on a $400K HHI here is about $156,720 a year — real money, but a long way from "rich."</p>
+        <div class="stat-mini">
+          <div><div class="n">$3,050</div><div class="l">Median 3BR rent / month</div></div>
+          <div><div class="n">37.9%</div><div class="l">Combined effective tax at $400K MFJ</div></div>
+          <div><div class="n">$1,720</div><div class="l">Median full-time daycare / month</div></div>
+          <div><div class="n">$156,720</div><div class="l">Post-fixed-cost slack / year</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container">
+  <div class="calc" id="calc">
+    <h2>Run the numbers for your household</h2>
+    <p class="sub">Pre-filled with Denver metro defaults. Override anything that doesn't match your situation.</p>
+    <div class="grid">
+      <div class="field">
+        <label for="i-hhi">Household income (W-2 + RSU, pre-tax)</label>
+        <input type="number" id="i-hhi" value="400000" min="100000" max="2000000" step="5000" />
+        <div class="hint">Cash + vested equity. Don't subtract anything yet.</div>
+      </div>
+      <div class="field">
+        <label for="i-city">City / metro</label>
+        <select id="i-city"></select>
+        <div class="hint">Anchored to the metro's median 3BR rent / daycare / etc.</div>
+      </div>
+      <div class="field">
+        <label for="i-rent">Your housing cost (monthly)</label>
+        <input type="number" id="i-rent" value="" placeholder="auto-fills from metro" min="0" step="50" />
+        <div class="hint">Rent or PITI. Leave blank to use metro median.</div>
+      </div>
+      <div class="field">
+        <label for="i-kids">Kids in full-time care</label>
+        <select id="i-kids">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+        </select>
+        <div class="hint">Counts full-day daycare or after-school + nanny share.</div>
+      </div>
+      <div class="field">
+        <label for="i-health">Family health premium (monthly, your share)</label>
+        <input type="number" id="i-health" value="" placeholder="auto-fills from metro" min="0" step="10" />
+        <div class="hint">The number that comes off your paycheck. Not the employer's share.</div>
+      </div>
+      <div class="field">
+        <label for="i-transport">Transport (monthly, all-in)</label>
+        <input type="number" id="i-transport" value="" placeholder="auto-fills from metro" min="0" step="10" />
+        <div class="hint">Two car payments + insurance + gas, or transit + Uber, or one of each.</div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" id="calc-btn">Compute my score</button>
+      <button class="btn-ghost" id="reset-btn">Reset to metro defaults</button>
+    </div>
+
+    <div class="result" id="result">
+      <div class="verdict-row">
+        <div class="score-bubble"><div class="num" id="r-score">—</div><div class="max">/ 100</div></div>
+        <div class="verdict-text">
+          <div class="verdict-label" id="r-label">—</div>
+          <div class="verdict-detail" id="r-detail">—</div>
+        </div>
+      </div>
+
+      <div class="breakdown">
+        <h3 style="font-size:17px;margin-bottom:10px;">Where the money goes</h3>
+        <table id="r-breakdown"><tbody></tbody></table>
+      </div>
+
+      <div class="subscribe-cta">
+        <h3>Get the deep dive on your three biggest leaks.</h3>
+        <p>We send one Henry Finance issue every Tuesday and Friday. No spam. The next one ranks the tactical fixes for your top three line items — childcare arbitrage, the AMT/SALT shift, and house-rich/cash-poor traps.</p>
+        <form class="sub-form" id="sub-form">
+          <input type="email" id="sub-email" placeholder="you@whereveryou.work" required />
+          <button type="submit" class="btn-primary">Send me the playbook</button>
+        </form>
+        <div class="sub-status" id="sub-status"></div>
+      </div>
+
+      <div class="share-row">
+        <div class="pill" id="share-twitter">Share on X</div>
+        <div class="pill" id="share-copy">Copy result link</div>
+        <div class="pill" id="share-substack">Restack on Substack</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container neighbors">
+  <h2>How Denver compares</h2>
+  <p class="sub">The neighbors on either side of Denver in the 30-metro ranking.</p>
+  <div class="neighbors-grid">
+    <div class="neighbors-col"><h3>More squeezed than Denver</h3><ul><li><a href="miami-fl.html">Miami, FL</a><span class="s">38</span></li><li><a href="sacramento-ca.html">Sacramento, CA</a><span class="s">39</span></li><li><a href="seattle-wa.html">Seattle, WA</a><span class="s">40</span></li></ul></div>
+    <div class="neighbors-col"><h3>Less squeezed than Denver</h3><ul><li><a href="chicago-il.html">Chicago, IL</a><span class="s">38</span></li><li><a href="minneapolis-mn.html">Minneapolis, MN</a><span class="s">36</span></li><li><a href="atlanta-ga.html">Atlanta, GA</a><span class="s">32</span></li></ul></div>
+  </div>
+  <p style="margin-top: 24px;"><a href="../#rank">See the full 30-city ranking →</a></p>
+</section>
+
+<section class="container" style="padding: 24px 22px 56px;">
+  <div class="subscribe-cta" style="margin: 0;">
+    <h3>Henry Finance — for high earners who don't feel rich.</h3>
+    <p>One free issue every Tuesday and Friday. Frameworks, not formulas. Written by a HENRY for HENRYs. No "10x your wealth" content. No pop-ups.</p>
+    <form class="sub-form" onsubmit="event.preventDefault(); window.open('https://henryfinance.substack.com/subscribe?email=' + encodeURIComponent(this.querySelector('input').value) + '&utm_source=quietbroke&utm_medium=citypage&utm_content=denver-co', '_blank', 'noopener');">
+      <input type="email" placeholder="you@whereveryou.work" required />
+      <button type="submit" class="btn-primary">Subscribe (free)</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p><strong>The Quiet-Broke Index</strong> is a research project of <a href="https://henryfinance.substack.com/?utm_source=quietbroke&utm_medium=citypage-footer&utm_content=denver-co">Henry Finance</a> — a twice-weekly newsletter for high earners who don't feel rich.</p>
+    <p>v0.1, May 2026. Numbers refresh monthly. <a href="../">Back to the index</a> · <a href="../methodology.html">Methodology</a> · <a href="https://henryfinance.substack.com/?utm_source=quietbroke&utm_medium=citypage-footer-2&utm_content=denver-co">Subscribe (free)</a></p>
+  </div>
+</footer>
+
+<script>
+  // Set default city in the embedded calculator before app.js loads
+  window.QBI_DEFAULT_CITY = "denver-co";
+</script>
+<script src="../app.js"></script>
+</body>
+</html>

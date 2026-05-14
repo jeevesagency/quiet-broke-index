@@ -8,183 +8,19 @@
 <meta property="og:title" content="The Quiet-Broke Index" />
 <meta property="og:description" content="A $400K household isn't 'rich' anymore in 8 of America's 30 largest metros. We measured how much." />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://quietbrokeindex.com/" />
-<meta property="og:image" content="https://quietbrokeindex.com/assets/og.png" />
+<meta property="og:url" content="https://jeevesagency.github.io/quiet-broke-index/" />
+<meta property="og:image" content="https://jeevesagency.github.io/quiet-broke-index/assets/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<style>
-  :root {
-    --bg: #f7f4ee;
-    --bg-card: #fffdf8;
-    --ink: #1b1a17;
-    --ink-soft: #4a4742;
-    --ink-mute: #7a766f;
-    --line: #d9d2c6;
-    --line-soft: #ebe6dc;
-    --accent: #b3361f;
-    --accent-soft: #f3dfd6;
-    --warn: #b07a14;
-    --good: #2d5a3d;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); }
-  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
-  h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; font-weight: 600; letter-spacing: -0.01em; line-height: 1.12; margin: 0; }
-  h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.025em; }
-  h2 { font-size: clamp(28px, 3.6vw, 40px); }
-  h3 { font-size: clamp(20px, 2.2vw, 24px); }
-  a { color: var(--accent); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  .container { max-width: 1080px; margin: 0 auto; padding: 0 22px; }
-  .narrow { max-width: 720px; margin: 0 auto; padding: 0 22px; }
-
-  /* Top bar */
-  .topbar {
-    border-bottom: 1px solid var(--line);
-    background: var(--bg);
-  }
-  .topbar-inner { display: flex; align-items: center; justify-content: space-between; padding: 14px 22px; max-width: 1080px; margin: 0 auto; }
-  .brand { font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px; color: var(--ink); letter-spacing: 0.01em; }
-  .brand .by { color: var(--ink-mute); font-weight: 400; font-style: italic; margin-left: 8px; font-size: 14px; }
-  .topbar a.sub { background: var(--ink); color: var(--bg-card); padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 500; letter-spacing: 0.01em; }
-  .topbar a.sub:hover { background: var(--accent); text-decoration: none; }
-
-  /* Hero */
-  .hero { padding: 64px 0 28px; }
-  .hero .eyebrow { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 18px; font-weight: 500; }
-  .hero h1 .accent { color: var(--accent); font-style: italic; }
-  .hero .lede { font-size: 21px; line-height: 1.45; color: var(--ink-soft); margin-top: 22px; max-width: 660px; }
-  .hero .stat-row { display: flex; gap: 32px; flex-wrap: wrap; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line-soft); }
-  .hero .stat .n { font-family: 'Fraunces', serif; font-size: 36px; font-weight: 600; color: var(--ink); line-height: 1; }
-  .hero .stat .l { font-size: 13px; color: var(--ink-mute); margin-top: 6px; max-width: 160px; }
-
-  /* Calc */
-  .calc {
-    margin: 56px 0 72px;
-    background: var(--bg-card);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 36px;
-  }
-  .calc h2 { margin-bottom: 6px; }
-  .calc .sub { color: var(--ink-mute); font-size: 15px; margin-bottom: 28px; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 22px; }
-  .field label { display: block; font-size: 13px; font-weight: 600; color: var(--ink-soft); margin-bottom: 6px; letter-spacing: 0.01em; }
-  .field input, .field select {
-    width: 100%; padding: 11px 13px; font-size: 15px; font-family: inherit; color: var(--ink);
-    background: #fff; border: 1px solid var(--line); border-radius: 4px; outline: none;
-  }
-  .field input:focus, .field select:focus { border-color: var(--ink); }
-  .field .hint { font-size: 12px; color: var(--ink-mute); margin-top: 5px; }
-  .calc .actions { margin-top: 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-  .btn-primary {
-    background: var(--accent); color: #fff; border: none; padding: 12px 22px; border-radius: 4px;
-    font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit;
-  }
-  .btn-primary:hover { background: #962d18; }
-  .btn-ghost {
-    background: transparent; color: var(--ink); border: 1px solid var(--line); padding: 12px 18px; border-radius: 4px;
-    font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit;
-  }
-
-  /* Result panel */
-  .result { display: none; margin-top: 30px; padding-top: 28px; border-top: 1px solid var(--line-soft); }
-  .result.show { display: block; }
-  .verdict-row { display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap; }
-  .score-bubble {
-    font-family: 'Fraunces', serif;
-    background: var(--ink); color: var(--bg-card);
-    width: 132px; height: 132px; border-radius: 50%;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .score-bubble .num { font-size: 52px; font-weight: 700; line-height: 1; }
-  .score-bubble .max { font-size: 13px; color: #b8b4ab; margin-top: 4px; }
-  .verdict-text { flex: 1; min-width: 280px; }
-  .verdict-label { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 600; line-height: 1.15; margin-bottom: 8px; color: var(--ink); }
-  .verdict-detail { color: var(--ink-soft); font-size: 16px; line-height: 1.55; }
-  .verdict-detail strong { color: var(--ink); }
-  .breakdown { margin-top: 28px; }
-  .breakdown table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  .breakdown td { padding: 9px 0; border-bottom: 1px solid var(--line-soft); }
-  .breakdown td:first-child { color: var(--ink-soft); }
-  .breakdown td:last-child { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
-  .breakdown .bar-wrap { width: 100%; background: var(--line-soft); height: 6px; border-radius: 3px; overflow: hidden; margin-top: 4px; }
-  .breakdown .bar { height: 100%; background: var(--accent); }
-
-  .subscribe-cta {
-    margin-top: 30px; padding: 22px 24px; background: var(--accent-soft); border-radius: 6px;
-  }
-  .subscribe-cta h3 { font-size: 20px; margin-bottom: 6px; color: var(--ink); }
-  .subscribe-cta p { font-size: 14px; color: var(--ink-soft); margin: 0 0 14px; }
-  .sub-form { display: flex; gap: 8px; flex-wrap: wrap; }
-  .sub-form input { flex: 1; min-width: 220px; padding: 11px 13px; font-size: 15px; border: 1px solid var(--line); border-radius: 4px; font-family: inherit; background: #fff; }
-  .sub-form button { padding: 11px 20px; }
-  .sub-status { font-size: 13px; color: var(--ink-soft); margin-top: 10px; min-height: 1.2em; }
-
-  .share-row { margin-top: 22px; display: flex; gap: 10px; flex-wrap: wrap; }
-  .share-row .pill { font-size: 13px; padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink); cursor: pointer; background: #fff; }
-  .share-row .pill:hover { border-color: var(--ink); }
-
-  /* Rankings */
-  .rankings { padding: 56px 0 72px; }
-  .rankings h2 { margin-bottom: 6px; }
-  .rankings .sub { color: var(--ink-mute); font-size: 15px; margin-bottom: 24px; max-width: 620px; }
-  table.rank { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--bg-card); }
-  table.rank th, table.rank td { padding: 13px 14px; border-bottom: 1px solid var(--line-soft); text-align: left; }
-  table.rank th { font-size: 12px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; border-bottom: 1px solid var(--line); }
-  table.rank td.score { font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px; font-variant-numeric: tabular-nums; }
-  table.rank td.score .meter { display: inline-block; vertical-align: middle; width: 80px; height: 5px; background: var(--line-soft); border-radius: 3px; margin-left: 10px; overflow: hidden; }
-  table.rank td.score .meter > span { display: block; height: 100%; background: var(--accent); }
-  table.rank td.rank-n { color: var(--ink-mute); width: 36px; font-variant-numeric: tabular-nums; }
-  table.rank tr:hover td { background: rgba(255,255,255,0.5); }
-
-  .tag-row { display: inline-flex; gap: 6px; }
-  .tag { display: inline-block; padding: 2px 8px; font-size: 11px; border-radius: 999px; background: var(--line-soft); color: var(--ink-soft); font-weight: 500; }
-  .tag.warn { background: #f7e8c8; color: #7a5510; }
-  .tag.danger { background: var(--accent-soft); color: var(--accent); }
-
-  /* Findings */
-  .findings { padding: 56px 0 24px; background: var(--bg-card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-  .findings .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 36px; margin-top: 32px; }
-  .finding-card .n { font-family: 'Fraunces', serif; font-size: 56px; font-weight: 700; line-height: 1; color: var(--accent); }
-  .finding-card .lbl { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600; margin-top: 10px; line-height: 1.3; }
-  .finding-card p { font-size: 14px; color: var(--ink-soft); margin-top: 8px; }
-
-  /* Methodology */
-  .method { padding: 56px 0; }
-  .method ul { padding-left: 1.1em; }
-  .method li { margin-bottom: 8px; color: var(--ink-soft); }
-  .method code { background: var(--line-soft); padding: 1px 6px; border-radius: 3px; font-size: 13px; }
-
-  /* Footer */
-  footer { border-top: 1px solid var(--line); padding: 38px 0 60px; font-size: 14px; color: var(--ink-mute); }
-  footer p { margin: 4px 0; }
-  footer a { color: var(--ink-soft); border-bottom: 1px solid var(--line); }
-  footer a:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
-
-  /* Mobile */
-  @media (max-width: 720px) {
-    .grid { grid-template-columns: 1fr; }
-    .calc { padding: 24px 20px; margin: 32px 0 48px; }
-    .findings .grid-3 { grid-template-columns: 1fr; gap: 28px; }
-    .hero { padding: 40px 0 20px; }
-    .score-bubble { width: 100px; height: 100px; }
-    .score-bubble .num { font-size: 40px; }
-    table.rank { font-size: 14px; }
-    table.rank th, table.rank td { padding: 10px 8px; }
-    table.rank td.score .meter { display: none; }
-    .hide-mobile { display: none; }
-  }
-</style>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
 <div class="topbar">
   <div class="topbar-inner">
-    <div class="brand">The Quiet-Broke Index <span class="by">a Henry Finance research project</span></div>
+    <div class="brand"><a href="./">The Quiet-Broke Index</a> <span class="by">a Henry Finance research project</span></div>
     <a class="sub" href="https://henryfinance.substack.com/subscribe?utm_source=quietbroke&utm_medium=topbar" target="_blank" rel="noopener">Subscribe free</a>
   </div>
 </div>
@@ -362,13 +198,14 @@
 
     <h3 style="margin-top: 32px; font-size: 22px;">What this is and isn't</h3>
     <p style="color: var(--ink-soft);">This is a one-page index from one publication, version 0.1, refreshed monthly. It's a starting point for a conversation, not the IRS. If you think a number is off, <a href="mailto:hello@henryfinance.com?subject=Quiet-Broke%20Index%20feedback">tell us why</a> and we'll fix it publicly.</p>
+    <p style="margin-top: 18px;"><a href="methodology.html">Read the full methodology →</a></p>
   </div>
 </section>
 
 <footer>
   <div class="container">
     <p><strong>The Quiet-Broke Index</strong> is a research project of <a href="https://henryfinance.substack.com/?utm_source=quietbroke&utm_medium=footer">Henry Finance</a> — a twice-weekly newsletter for high earners who don't feel rich.</p>
-    <p>v0.1, May 2026. Numbers refresh monthly. <a href="#method">Methodology</a> · <a href="https://henryfinance.substack.com/?utm_source=quietbroke&utm_medium=footer-2">Subscribe (free)</a></p>
+    <p>v0.1, May 2026. Numbers refresh monthly. <a href="methodology.html">Methodology</a> · <a href="https://henryfinance.substack.com/?utm_source=quietbroke&utm_medium=footer-2">Subscribe (free)</a></p>
   </div>
 </footer>
 

@@ -8,8 +8,14 @@
   const pct = (n) => (n * 100).toFixed(1) + '%';
 
   let DATA = null;
+  // Resolve cities.json relative to wherever app.js was loaded from.
+  // Lets the same script work from /, /city/<slug>.html, /methodology.html, etc.
+  const APP_SCRIPT = Array.from(document.scripts).find((s) => /\/app\.js(?:\?|$)/.test(s.src));
+  const DATA_URL = APP_SCRIPT
+    ? new URL('data/cities.json', APP_SCRIPT.src).toString()
+    : 'data/cities.json';
   try {
-    const r = await fetch('data/cities.json');
+    const r = await fetch(DATA_URL);
     DATA = await r.json();
   } catch (e) {
     console.error('Failed to load city data', e);
@@ -106,10 +112,14 @@
     sel.appendChild(o);
   });
 
-  // default selection: try IP geo guess if available, else NYC
+  // default selection: page-specified override (city pages) > localStorage > NYC
   let defaultSlug = 'new-york-ny';
-  const stored = (typeof localStorage !== 'undefined') && localStorage.getItem('qbi_city');
-  if (stored && cities.find(c => c.slug === stored)) defaultSlug = stored;
+  if (typeof window !== 'undefined' && window.QBI_DEFAULT_CITY && cities.find(c => c.slug === window.QBI_DEFAULT_CITY)) {
+    defaultSlug = window.QBI_DEFAULT_CITY;
+  } else {
+    const stored = (typeof localStorage !== 'undefined') && localStorage.getItem('qbi_city');
+    if (stored && cities.find(c => c.slug === stored)) defaultSlug = stored;
+  }
   sel.value = defaultSlug;
 
   function autofillFromCity() {
@@ -190,7 +200,7 @@
                        .sort((a, b) => b.r.score - a.r.score);
 
   const rb = document.querySelector('#rank-table tbody');
-  ranked.forEach((row, i) => {
+  if (rb) ranked.forEach((row, i) => {
     const tr = document.createElement('tr');
     const s = row.r.score;
     const tag = s >= 80 ? '<span class="tag danger">very squeezed</span>'
@@ -218,10 +228,10 @@
   // ---- hero stats: compute from real data ----
   const top10 = ranked.slice(0, 10);
   const avgFixedTop10 = top10.reduce((s, x) => s + x.r.f.housing_yr + x.r.f.childcare_yr + x.r.f.health_yr + x.r.f.transport_yr + x.r.f.eff_tax * x.r.f.hhi, 0) / 10;
-  $('hero-stat-2').textContent = '$' + Math.round(avgFixedTop10 / 1000) + 'k';
+  if ($('hero-stat-2')) $('hero-stat-2').textContent = '$' + Math.round(avgFixedTop10 / 1000) + 'k';
   const maxH = Math.max(...cities.map(c => c.median_3br_rent_mo));
   const minH = Math.min(...cities.map(c => c.median_3br_rent_mo));
-  $('hero-stat-3').textContent = (maxH / minH).toFixed(1) + '×';
+  if ($('hero-stat-3')) $('hero-stat-3').textContent = (maxH / minH).toFixed(1) + '×';
 
   // ---- subscribe ----
   const subForm = $('sub-form');
