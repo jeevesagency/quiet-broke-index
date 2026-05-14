@@ -86,9 +86,7 @@ const medians = (() => {
   };
 })();
 
-// --- editorial take generator ---
-// Identifies the line item that's disproportionately driving the squeeze
-// relative to the 30-metro median, and writes a one-paragraph diagnosis.
+// --- editorial take generator (hero blurb) ---
 function take(c, r, rankIdx) {
   const housingShareGross = r.f.housing_yr / r.f.hhi;
   const housingMedShareGross = (medians.rent * 12) / DEFAULT_HHI;
@@ -96,7 +94,6 @@ function take(c, r, rankIdx) {
   const daycareDelta = c.median_ft_daycare_mo - medians.daycare;
   const slack = r.f.slack_yr;
 
-  // pick the dominant story
   const housingRatio = c.median_3br_rent_mo / medians.rent;
   const isHousingHeavy = housingRatio >= 1.25;
   const isTaxHeavy = taxDelta >= 0.025;
@@ -153,6 +150,180 @@ function neighborLi(row) {
   return `<li><a href="${row.c.slug}.html">${escapeHtml(row.c.name)}, ${row.c.state}</a><span class="s">${row.r.score}</span></li>`;
 }
 
+// --- article body generator ---
+// Generates a unique 600-800 word article section for each city.
+// Each section covers: lead paragraph, score drivers, peer comparison, who feels the squeeze, data caveats.
+
+function articleBody(idx, row) {
+  const c = row.c;
+  const r = row.r;
+  const rankN = idx + 1;
+  const slack = r.f.slack_yr;
+  const { moreSqueezed, lessSqueezed } = neighbors(idx);
+
+  // Compare to 30-metro median for each line item
+  const housingPctOfGross = (c.median_3br_rent_mo * 12 / DEFAULT_HHI * 100).toFixed(1);
+  const medHousingPctOfGross = (medians.rent * 12 / DEFAULT_HHI * 100).toFixed(1);
+  const taxDelta = ((c.eff_combined_tax_400k - medians.tax) * 100).toFixed(1);
+  const taxDeltaNum = c.eff_combined_tax_400k - medians.tax;
+  const daycareDelta = c.median_ft_daycare_mo - medians.daycare;
+  const healthDelta = c.family_health_premium_mo - medians.health;
+  const transportDelta = c.commute_cost_mo - medians.transport;
+
+  // Comparison cities: pick 2-3 instructive peers from ranked list
+  // Prefer cities that score within ~10 points (similar) or far apart (contrasting)
+  const peerCandidates = ranked.filter((row2, i) => i !== idx);
+  const similarPeers = peerCandidates.filter(row2 => Math.abs(row2.r.score - r.score) <= 8 && row2.r.score !== r.score).slice(0, 2);
+  const contrastPeers = peerCandidates.filter(row2 => Math.abs(row2.r.score - r.score) >= 20).slice(0, 1);
+  const compPeers = [...similarPeers, ...contrastPeers].slice(0, 3);
+  // fallback to neighbors if not enough peers
+  const peersToUse = compPeers.length >= 2 ? compPeers : [...moreSqueezed.slice(0,1), ...lessSqueezed.slice(0,2)].filter(Boolean);
+
+  // Archetype: calculate slack for a 2-kid household vs a contrasting city
+  const cheapCity = ranked[ranked.length - 1];
+  const expensiveCity = ranked[0];
+  const archetypeCity = r.score < 40 ? expensiveCity : cheapCity;
+  const archetypeSlack = archetypeCity.r.f.slack_yr;
+
+  // City-specific editorial angles
+  const housingAngle = (() => {
+    const ratio = c.median_3br_rent_mo / medians.rent;
+    if (ratio >= 1.5) return `Housing is the dominant cost — ${fmt$(c.median_3br_rent_mo)}/month for a median 3BR is ${(ratio).toFixed(2)}x the 30-metro median of ${fmt$(medians.rent)}. That single line item eats ${housingPctOfGross}% of gross income before you've paid a dollar in tax, versus a ${medHousingPctOfGross}% median across all 30 metros.`;
+    if (ratio >= 1.2) return `Housing runs ${fmt$(c.median_3br_rent_mo)}/month for a median 3BR — well above the 30-metro median of ${fmt$(medians.rent)} (${medHousingPctOfGross}% of gross). At ${housingPctOfGross}% of a $400K gross, it's the largest single drain in the budget.`;
+    if (ratio <= 0.75) return `Housing is one of ${c.name}'s genuine advantages. The median 3BR clocks in at ${fmt$(c.median_3br_rent_mo)}/month, just ${housingPctOfGross}% of a $400K gross — far below the 30-metro median of ${fmt$(medians.rent)} (${medHousingPctOfGross}% of gross). That gap alone is worth ${fmt$((medians.rent - c.median_3br_rent_mo) * 12)} a year in slack.`;
+    return `Housing is close to the 30-metro median, at ${fmt$(c.median_3br_rent_mo)}/month (${housingPctOfGross}% of gross) versus a metro-wide median of ${fmt$(medians.rent)} (${medHousingPctOfGross}% of gross). Not cheap, not the headline story.`;
+  })();
+
+  const taxAngle = (() => {
+    const taxPct = (c.eff_combined_tax_400k * 100).toFixed(1);
+    const medTaxPct = (medians.tax * 100).toFixed(1);
+    const taxBite = Math.round(c.eff_combined_tax_400k * DEFAULT_HHI);
+    if (taxDeltaNum >= 0.03) return `Taxes are a meaningful drag. At ${taxPct}% combined effective rate for MFJ at $400K, ${c.name} runs ${taxDelta} points above the 30-metro median of ${medTaxPct}%. That difference is roughly ${fmt$(taxDeltaNum * DEFAULT_HHI)} more in annual taxes than the median metro — money that simply doesn't land in your account.`;
+    if (taxDeltaNum <= -0.03) return `Taxes are a genuine tailwind here. The combined effective rate at $400K MFJ is ${taxPct}% — ${Math.abs(parseFloat(taxDelta))} points below the 30-metro median of ${medTaxPct}%. The state has no income tax, which keeps ${fmt$(Math.abs(taxDeltaNum) * DEFAULT_HHI)} a year in the household versus a median-tax metro.`;
+    return `Taxes are near the 30-metro median. The combined effective rate for MFJ at $400K is ${taxPct}% (median: ${medTaxPct}%), which translates to ${fmt$(taxBite)} in annual taxes. No particular advantage or disadvantage here.`;
+  })();
+
+  const childcareAngle = (() => {
+    const twoKidYr = c.median_ft_daycare_mo * 2 * 12;
+    const medTwoKidYr = medians.daycare * 2 * 12;
+    if (daycareDelta >= 400) return `Childcare costs sting. Full-time daycare runs ${fmt$(c.median_ft_daycare_mo)}/month per child — for two kids, that's ${fmt$(twoKidYr)}/year, or ${fmt$(twoKidYr - medTwoKidYr)} more than the 30-metro median of ${fmt$(medians.daycare)}/month. These are post-tax dollars, so the real gross equivalent at ${(c.eff_combined_tax_400k*100).toFixed(0)}% effective rate is closer to ${fmt$(twoKidYr / (1 - c.eff_combined_tax_400k))}.`;
+    if (daycareDelta <= -250) return `Childcare is a relative relief. At ${fmt$(c.median_ft_daycare_mo)}/month per child, two kids in full-time care runs ${fmt$(twoKidYr)}/year — ${fmt$(medTwoKidYr - twoKidYr)} less than the 30-metro median. That's real savings for the family-formation cohort.`;
+    return `Childcare is roughly average. Full-time care runs ${fmt$(c.median_ft_daycare_mo)}/month per child — for two kids, ${fmt$(twoKidYr)}/year total. The 30-metro median is ${fmt$(medians.daycare)}/month, so ${c.name} is within ${fmt$(Math.abs(daycareDelta))}/month of dead center.`;
+  })();
+
+  const healthAngle = (() => {
+    const annualHealth = c.family_health_premium_mo * 12;
+    const medAnnualHealth = medians.health * 12;
+    if (healthDelta >= 40) return `Family health premiums (employee share) run ${fmt$(c.family_health_premium_mo)}/month — ${fmt$(healthDelta)}/month above the 30-metro median. At ${fmt$(annualHealth)}/year, this is a smaller line item than housing or taxes, but it's not nothing.`;
+    if (healthDelta <= -40) return `Health premiums (employee share) are below average at ${fmt$(c.family_health_premium_mo)}/month. At ${fmt$(annualHealth)}/year, that's ${fmt$(medAnnualHealth - annualHealth)} less than the median metro.`;
+    return `Health premiums (employee share) are close to the 30-metro average at ${fmt$(c.family_health_premium_mo)}/month, or ${fmt$(annualHealth)}/year. Not a distinguishing factor in ${c.name}'s score.`;
+  })();
+
+  const transportAngle = (() => {
+    const annualTransport = c.commute_cost_mo * 12;
+    if (transportDelta >= 40) return `Transport runs ${fmt$(c.commute_cost_mo)}/month all-in (two cars plus insurance and fuel, or a hybrid transit/rideshare mix), which is above average for the index. At ${fmt$(annualTransport)}/year, it adds meaningful pressure given the rest of the cost stack.`;
+    if (transportDelta <= -40) return `Transport costs are lower than most metros at ${fmt$(c.commute_cost_mo)}/month all-in. At ${fmt$(annualTransport)}/year, this is one area where ${c.name} provides a modest offset against higher costs elsewhere.`;
+    return `Transport comes in at ${fmt$(c.commute_cost_mo)}/month all-in — close to the 30-metro median. At ${fmt$(annualTransport)}/year, it's a steady fixed cost but not what's moving the needle on ${c.name}'s score.`;
+  })();
+
+  // Peer comparison section
+  const peerParas = peersToUse.map(peerRow => {
+    const p = peerRow.c;
+    const pRankN = ranked.findIndex(rr => rr.c.slug === p.slug) + 1;
+    const pSlack = peerRow.r.f.slack_yr;
+    const scoreDiff = r.score - peerRow.r.score;
+    const direction = scoreDiff > 0 ? 'more squeezed' : 'less squeezed';
+    const absDiff = Math.abs(scoreDiff);
+    if (absDiff <= 5) {
+      return `<a href="${p.slug}.html">${p.name}, ${p.state}</a> (score ${peerRow.r.score}, rank ${pRankN}) is the closest comparable — nearly identical squeeze levels despite different cost structures. ${p.name} has housing at ${fmt$(p.median_3br_rent_mo)}/month and taxes at ${(p.eff_combined_tax_400k*100).toFixed(1)}%, while ${c.name} runs ${fmt$(c.median_3br_rent_mo)}/month and ${(c.eff_combined_tax_400k*100).toFixed(1)}% respectively. Same total pain, different sources.`;
+    } else if (scoreDiff > 10) {
+      return `<a href="${p.slug}.html">${p.name}, ${p.state}</a> (score ${peerRow.r.score}) is notably ${direction} than ${c.name}. The gap is mostly ${c.median_3br_rent_mo > p.median_3br_rent_mo ? 'housing' : c.eff_combined_tax_400k > p.eff_combined_tax_400k ? 'taxes' : 'childcare'} — ${c.name}'s ${c.median_3br_rent_mo > p.median_3br_rent_mo ? fmt$(c.median_3br_rent_mo) + ' median rent versus ' + fmt$(p.median_3br_rent_mo) : (c.eff_combined_tax_400k*100).toFixed(1) + '% effective tax versus ' + (p.eff_combined_tax_400k*100).toFixed(1) + '%'}. A $400K household in ${p.name} keeps ${fmt$(pSlack)}/year post-fixed-costs versus ${fmt$(slack)} in ${c.name}.`;
+    } else {
+      return `<a href="${p.slug}.html">${p.name}, ${p.state}</a> (score ${peerRow.r.score}) scores ${absDiff} points ${direction} than ${c.name}. The difference in post-fixed-cost slack is ${fmt$(Math.abs(slack - pSlack))}/year — meaningful but not city-changing. The two metros make an instructive comparison for households deciding between them.`;
+    }
+  });
+
+  // Archetype section
+  const archetypePara = (() => {
+    const twoKidChildcare = c.median_ft_daycare_mo * 2 * 12;
+    const taxBite = Math.round(c.eff_combined_tax_400k * DEFAULT_HHI);
+    const fixedTotal = r.f.housing_yr + twoKidChildcare + r.f.health_yr + r.f.transport_yr + taxBite;
+
+    if (r.score >= 55) {
+      // High-squeeze city: focus on how little is left
+      return `Take a dual-income couple in ${c.name}: both work in tech or finance, combined W-2 of $400K, two kids in full-time care, renting a median 3BR. Their tax bill is ${fmt$(taxBite)}/year. Housing eats another ${fmt$(r.f.housing_yr)}/year. Two kids in daycare at ${fmt$(c.median_ft_daycare_mo)}/month each: ${fmt$(twoKidChildcare)}/year. Health and transport add ${fmt$(r.f.health_yr + r.f.transport_yr)}/year. Total fixed obligations: ${fmt$(fixedTotal)} — leaving ${fmt$(slack)} for everything else. That's retirement contributions, college savings, vacations, car repairs, and any savings above the 401(k). It's workable, but it's not the "you're rich" number most people assume $400K to be.`;
+    } else if (r.score >= 35) {
+      // Mid-range city
+      return `Consider a dual-income ${c.name} household earning $400K combined: federal and state taxes claim ${fmt$(taxBite)}/year. Rent at the median 3BR costs ${fmt$(r.f.housing_yr)}/year. Two kids in full-time care: ${fmt$(twoKidChildcare)}/year. Health premiums and transport add ${fmt$(r.f.health_yr + r.f.transport_yr)}/year. Fixed obligations total ${fmt$(fixedTotal)}, leaving ${fmt$(slack)}/year. Compare that to the same income in ${archetypeCity.c.name}: the post-fixed slack there is ${fmt$(archetypeSlack)}. The ${fmt$(Math.abs(slack - archetypeSlack))} gap is what "location arbitrage" actually looks like in dollar terms.`;
+    } else {
+      // Low-squeeze city: highlight the advantage vs coastal peer
+      return `Run the numbers for a $400K dual-income ${c.name} household with two kids: taxes take ${fmt$(taxBite)}/year. Housing at ${fmt$(r.f.housing_yr)}/year. Two kids in daycare at ${fmt$(c.median_ft_daycare_mo)}/month each: ${fmt$(twoKidChildcare)}/year. Health and transport: ${fmt$(r.f.health_yr + r.f.transport_yr)}/year. Fixed obligations total ${fmt$(fixedTotal)}, leaving ${fmt$(slack)}/year in post-fixed slack. For comparison, the same household in ${archetypeCity.c.name} (score ${archetypeCity.r.score}) keeps only ${fmt$(archetypeSlack)}/year — ${fmt$(slack - archetypeSlack)} less. That difference, compounded over a decade, is a material wealth gap.`;
+    }
+  })();
+
+  // Caveats section
+  const caveatPara = (() => {
+    const caveats = [];
+
+    // Tax caveat
+    caveats.push(`The tax rate used here is an effective rate estimate for a $400K MFJ household in ${c.name} — it blends federal, state, and city income tax with payroll taxes, and does not account for RSU timing, alternative minimum tax, or SALT deduction phase-outs, all of which can shift your actual bill by several percentage points.`);
+
+    // Childcare caveat (if city has above-average costs, mention private school)
+    if (c.median_ft_daycare_mo > medians.daycare) {
+      caveats.push(`The childcare figure covers full-time daycare for young children. Once kids reach school age, the choice between public and private school in ${c.name} can swing this line item by ${fmt$(15000)} to ${fmt$(45000)}/year per child — a scenario the index doesn't model.`);
+    } else {
+      caveats.push(`The childcare figure covers full-time daycare. Private school tuition in ${c.name} can add ${fmt$(15000)} to ${fmt$(40000)}/year per child once kids hit school age — a scenario the index doesn't capture.`);
+    }
+
+    // Partner income caveat
+    caveats.push(`This model assumes a two-earner household. Single-income households at $400K face a structurally different tax profile (often more favorable at this income level due to bracket differences), and households where one partner has large RSU cliff vests will see income concentration risk that changes the picture significantly from year to year.`);
+
+    return caveats.slice(0, 3).map(s => `<p>${s}</p>`).join('\n');
+  })();
+
+  return `
+<section class="container city-article" style="padding: 40px 22px 0;">
+  <article>
+    <h1 style="font-size:clamp(22px,4vw,34px); font-family: var(--serif); font-weight:700; line-height:1.2; margin-bottom:20px;">${escapeHtml(c.name)} Quiet-Broke Index: How squeezed is a $400K household in ${escapeHtml(c.name)}?</h1>
+
+    <p class="sub" style="font-size:17px; line-height:1.6; margin-bottom:32px;">${c.name} earns a Quiet-Broke score of <strong>${r.score} out of 100</strong>, ranking it <strong>${rankN} of 30 metros</strong> tracked in this index — the higher the score, the more squeezed a $400K household feels. ${take(c, r, idx)} For the full methodology behind these numbers, see the <a href="../methodology.html">methodology page</a> and the original <a href="https://henryfinance.substack.com/p/the-quiet-broke-index" target="_blank" rel="noopener">Henry Finance deep dive on the Quiet-Broke Index</a>.</p>
+
+    <h2 style="font-family: var(--serif); font-weight:700; font-size:clamp(18px,3vw,26px); margin: 32px 0 16px;">What drives ${escapeHtml(c.name)}'s score</h2>
+    <p>Five line items go into the index. Here is how ${escapeHtml(c.name)} stacks up on each, relative to the 30-metro median:</p>
+
+    <h3 style="font-size:17px; font-weight:600; margin: 24px 0 8px;">Housing</h3>
+    <p>${housingAngle}</p>
+
+    <h3 style="font-size:17px; font-weight:600; margin: 24px 0 8px;">Taxes</h3>
+    <p>${taxAngle}</p>
+
+    <h3 style="font-size:17px; font-weight:600; margin: 24px 0 8px;">Childcare</h3>
+    <p>${childcareAngle}</p>
+
+    <h3 style="font-size:17px; font-weight:600; margin: 24px 0 8px;">Healthcare</h3>
+    <p>${healthAngle}</p>
+
+    <h3 style="font-size:17px; font-weight:600; margin: 24px 0 8px;">Transport</h3>
+    <p>${transportAngle}</p>
+
+    <h2 style="font-family: var(--serif); font-weight:700; font-size:clamp(18px,3vw,26px); margin: 40px 0 16px;">Compare to other metros</h2>
+    <p>Context matters. Here are the cities that score closest to ${escapeHtml(c.name)}, and what the comparison reveals about different ways to arrive at the same squeeze level:</p>
+    <ul style="padding-left:20px; line-height:1.8;">
+      ${peersToUse.map(peerRow => `<li>${peerParas[peersToUse.indexOf(peerRow)]}</li>`).join('\n      ')}
+    </ul>
+    <p>See where every metro lands on the <a href="../">Quiet-Broke Index home page</a>.</p>
+
+    <h2 style="font-family: var(--serif); font-weight:700; font-size:clamp(18px,3vw,26px); margin: 40px 0 16px;">Who feels the squeeze most in ${escapeHtml(c.name)}</h2>
+    <p>${archetypePara}</p>
+
+    <h2 style="font-family: var(--serif); font-weight:700; font-size:clamp(18px,3vw,26px); margin: 40px 0 16px;">What the data leaves out</h2>
+    ${caveatPara}
+    <p style="font-size:14px; color: var(--ink-mute); margin-top:16px;">Full data sources and methodology: <a href="../methodology.html">Quiet-Broke Index methodology</a>. Original research: <a href="https://henryfinance.substack.com/p/the-quiet-broke-index" target="_blank" rel="noopener">Henry Finance — The Quiet-Broke Index</a>.</p>
+  </article>
+</section>
+`;
+}
+
 function cityPage(idx, row) {
   const c = row.c;
   const r = row.r;
@@ -161,9 +332,17 @@ function cityPage(idx, row) {
   const { moreSqueezed, lessSqueezed } = neighbors(idx);
   const editorial = take(c, r, idx);
 
-  const title = `${c.name}, ${c.state} Quiet-Broke Score: ${r.score} / 100 (Rank ${rankN} of 30)`;
-  const desc = `How squeezed is a $400K household in ${c.name}, ${c.state}? Quiet-Broke Index score: ${r.score}/100, rank ${rankN} of 30 US metros. Median 3BR rent ${fmt$(c.median_3br_rent_mo)}/mo, effective tax ${pct(c.eff_combined_tax_400k)}.`;
+  // SEO-optimized title and description
+  const title = `${c.name}, ${c.state} Quiet-Broke Index: How squeezed is a $400K household in ${c.name}?`;
+  const slack = r.f.slack_yr;
+  const slackK = Math.round(slack / 1000);
+
+  // Unique meta description 155-160 chars
+  const descCore = `Score: ${r.score}/100, rank ${rankN} of 30. Median 3BR: ${fmt$(c.median_3br_rent_mo)}/mo, tax rate: ${pct(c.eff_combined_tax_400k)}, post-fixed slack: ${fmt$(slack)}/yr.`;
+  const desc = `$400K in ${c.name}, ${c.state}? Quiet-Broke Index: squeezed-${r.score >= 50 ? 'hard' : 'moderate'}, rank ${rankN}/30. ${fmt$(c.median_3br_rent_mo)}/mo rent, ${pct(c.eff_combined_tax_400k)} effective tax, ${fmt$(slack)}/yr left after fixed costs.`.slice(0, 160);
+
   const canonical = `https://jeevesagency.github.io/quiet-broke-index/city/${c.slug}.html`;
+  const ogImage = `https://jeevesagency.github.io/quiet-broke-index/assets/og.png`;
 
   const moreHtml = moreSqueezed.length
     ? `<div class="neighbors-col"><h3>More squeezed than ${escapeHtml(c.name)}</h3><ul>${moreSqueezed.map(neighborLi).join('')}</ul></div>`
@@ -173,6 +352,37 @@ function cityPage(idx, row) {
     ? `<div class="neighbors-col"><h3>Less squeezed than ${escapeHtml(c.name)}</h3><ul>${lessSqueezed.map(neighborLi).join('')}</ul></div>`
     : `<div class="neighbors-col"><h3>Less squeezed than ${escapeHtml(c.name)}</h3><p style="color:var(--ink-mute); font-size:14px;">Nothing in the 30-metro set scores lower. ${escapeHtml(c.name)} is the least-squeezed metro on the index.</p></div>`;
 
+  const articleSection = articleBody(idx, row);
+
+  // JSON-LD Article structured data
+  const articleJsonLd = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": `${c.name} Quiet-Broke Index: How squeezed is a $400K household in ${c.name}?`,
+    "author": { "@type": "Organization", "name": "Henry Finance" },
+    "datePublished": "2026-05-01",
+    "dateModified": "2026-05-14",
+    "image": ogImage,
+    "publisher": {
+      "@type": "Organization",
+      "name": "Henry Finance",
+      "logo": { "@type": "ImageObject", "url": ogImage }
+    },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": canonical },
+    "description": desc
+  });
+
+  // JSON-LD BreadcrumbList
+  const breadcrumbJsonLd = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://jeevesagency.github.io/quiet-broke-index/" },
+      { "@type": "ListItem", "position": 2, "name": "Cities", "item": "https://jeevesagency.github.io/quiet-broke-index/#rank" },
+      { "@type": "ListItem", "position": 3, "name": `${c.name}, ${c.state}`, "item": canonical }
+    ]
+  });
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -181,12 +391,17 @@ function cityPage(idx, row) {
 <title>${escapeHtml(title)}</title>
 <meta name="description" content="${escapeHtml(desc)}" />
 <link rel="canonical" href="${canonical}" />
-<meta property="og:title" content="${escapeHtml(c.name)}, ${c.state}: Quiet-Broke score ${r.score}/100" />
+<meta property="og:title" content="${escapeHtml(c.name)}, ${c.state} Quiet-Broke Index: $400K household squeeze score ${r.score}/100" />
 <meta property="og:description" content="${escapeHtml(desc)}" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="${canonical}" />
-<meta property="og:image" content="https://jeevesagency.github.io/quiet-broke-index/assets/og.png" />
+<meta property="og:image" content="${ogImage}" />
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="${escapeHtml(c.name)}, ${c.state}: Is $400K enough? Quiet-Broke score ${r.score}/100 (rank ${rankN}/30)" />
+<meta name="twitter:description" content="${escapeHtml(desc)}" />
+<meta name="twitter:image" content="${ogImage}" />
+<script type="application/ld+json">${articleJsonLd}</script>
+<script type="application/ld+json">${breadcrumbJsonLd}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -300,10 +515,14 @@ function cityPage(idx, row) {
         <div class="pill" id="share-twitter">Share on X</div>
         <div class="pill" id="share-copy">Copy result link</div>
         <div class="pill" id="share-substack">Restack on Substack</div>
+        <div class="pill pill-primary" id="share-card-download">Download score card</div>
+        <div class="pill" id="share-card-copy">Copy image</div>
       </div>
     </div>
   </div>
 </section>
+
+${articleSection}
 
 <section class="container neighbors">
   <h2>How ${escapeHtml(c.name)} compares</h2>
@@ -338,6 +557,7 @@ function cityPage(idx, row) {
   window.QBI_DEFAULT_CITY = ${JSON.stringify(c.slug)};
 </script>
 <script src="../app.js"></script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "2e85ea576f9b4b69868ea3ff07c4018c"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
 `;
